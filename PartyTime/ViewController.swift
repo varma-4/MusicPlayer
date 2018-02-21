@@ -10,32 +10,39 @@ import UIKit
 import MediaPlayer
 
 class ViewController: UIViewController {
+    
+    var discView: DiscView = {
+        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2 + 20, height: UIScreen.main.bounds.height - 10)
+        let discView = DiscView(frame: frame)
+        discView.clipsToBounds = true
+        discView.translatesAutoresizingMaskIntoConstraints = false
+        discView.backgroundColor = .white
+       return discView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if MPMediaLibrary.authorizationStatus() == .notDetermined {
-            MPMediaLibrary.requestAuthorization({ (_) in
-                print("HopeFully it is authorized")
-            })
-        } else {
-            checkWhatAllAreAvailable()
-        }
+        createDiscView()
     }
     
-    func checkWhatAllAreAvailable() {
-        let myPlaylistQuery = MPMediaQuery.albums()
-        let playlists = myPlaylistQuery.collections
-        print(playlists![0].items)
-        for playlist in playlists! {
-            print(playlist.items.count)
-            print(playlist.value(forProperty: MPMediaPlaylistPropertyName)!)
-            
-            let songs = playlist.items
-            for song in songs {
-                let songTitle = song.value(forProperty: MPMediaItemPropertyTitle)
-                print("\t\t", songTitle!)
-            }
-        }
+    func createDiscView() {
+        self.view.addSubview(discView)
+        discView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        discView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+//        discView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 10).isActive = true
+//        discView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        discView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - 20).isActive = true
+        discView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 2 + 20).isActive = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(enlargeDiscView))
+        tapGesture.numberOfTapsRequired = 1
+        discView.isUserInteractionEnabled = true
+        discView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func enlargeDiscView() {
+        print("Tapped on View")
+        self.discView.paintDisc()
     }
 
     override func didReceiveMemoryWarning() {
