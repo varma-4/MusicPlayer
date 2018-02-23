@@ -8,8 +8,8 @@
 
 import UIKit
 
-class DiscView: UIView {
-    
+class DiscView: UIView, UIGestureRecognizerDelegate {
+
     var smallDiscModeOn = true
     var fromEnlargedState = false
     
@@ -19,14 +19,19 @@ class DiscView: UIView {
     }()
     
     lazy var centerOfDisc: CGPoint = {
-        let center = CGPoint(x: 0, y: bounds.height / 2)
+        let center = CGPoint(x: bounds.width/2, y: bounds.height / 2)
         return center
     }()
 
     var enlargedDiscFrame: CGRect = {
-        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 10, height: UIScreen.main.bounds.height)
+        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.height - 10, height: UIScreen.main.bounds.height - 10)
         return frame
     }()
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        print(touch)
+        return true
+    }
     
     // MARK: - View Life Cycle Methods
     override init(frame: CGRect) {
@@ -91,22 +96,22 @@ class DiscView: UIView {
             }
         } else {
             layer.sublayers = nil
-            
+
             // Outer Semicirle
             let enlargedDiscOuterShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-            
+
             // Animate Outer Semicircle
             let enlargedOuterAnimationGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().outer.radius))
             // Add Animation Object to Outer Semicircle
             enlargedDiscOuterShapeLayer.add(enlargedOuterAnimationGroup, forKey: nil)
-            
+
             // Inner SemiCircle
             let enlargedDiscInnerShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().inner.path, fillColor: .white)
             // Animate Inner Semicircle
             let enlargedInnerAnimationsGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().inner.radius))
             // Add Animation Group to shapeLayer
             enlargedDiscInnerShapeLayer.add(enlargedInnerAnimationsGroup, forKey: nil)
-            
+
             // First paint the Outer semicircle, followed by inner semicircle
             addLayer(shapeLayer: enlargedDiscOuterShapeLayer)
             addLayer(shapeLayer: enlargedDiscInnerShapeLayer)
@@ -115,8 +120,9 @@ class DiscView: UIView {
     }
     
     func smallDiscPath() -> (inner: (path: UIBezierPath, radius: CGFloat), outer: (path: UIBezierPath, radius: CGFloat)) {
-        let innerPath = getInnerSemiCircleBeizerpath(withRadius: 100)
-        let outerPath = getOuterSemiCircleBeizerPath(withRadius: 100)
+        let width = UIScreen.main.bounds.width + 60
+        let innerPath = getInnerSemiCircleBeizerpath(withRadius: 120)
+        let outerPath = getOuterSemiCircleBeizerPath(withRadius: width/2)
         return (innerPath, outerPath)
     }
     
@@ -127,7 +133,7 @@ class DiscView: UIView {
     }
     
     func getInnerSemiCircleBeizerpath(withRadius radius: CGFloat) -> (path: UIBezierPath, radius: CGFloat) {
-        let center = CGPoint(x: 0, y: bounds.height / 2)
+        let center = CGPoint(x: bounds.width/2, y: bounds.height / 2)
         let radiusFinal = radius/2 + 10
 
         // Generating Beizerpath for Inner Semi circle
@@ -136,16 +142,13 @@ class DiscView: UIView {
                                                startAngle: 0,
                                                endAngle: 180,
                                                clockwise: true)
-        // Fill color is always White
-        UIColor.white.setFill()
+ 
         return (innerSemiCirclePath, radiusFinal)
     }
     
     func getOuterSemiCircleBeizerPath(withRadius radius: CGFloat) -> (path: UIBezierPath, radius: CGFloat) {
         // Drawing Semicircle on the left corner
-        let color = UIColor.init(red: 51/255, green: 138/255, blue: 248/255, alpha: 1)
-        
-        let center = CGPoint(x: 0, y: bounds.height / 2)
+        let center = CGPoint(x: bounds.width/2, y: bounds.height / 2)
         
         // Drawing outer circle
         var radiusFinal = radius * 2
@@ -158,7 +161,7 @@ class DiscView: UIView {
                                                startAngle: 0,
                                                endAngle: 180,
                                                clockwise: true)
-        color.setFill()
+        
         return (outerSemiCirclePath, radiusFinal)
     }
     
@@ -287,4 +290,5 @@ extension UIView {
         
         self.layer.mask = maskLayer
     }
+
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3CEC356C203D3F5300885146 /* DiscView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEC356B203D3F5300885146 /* DiscView.swift */; };
+		3CED4C2A204026BB00F7BCDB /* CircularCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */; };
 		ADDCC7F0202CCB5000C3BFAC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */; };
 		ADDCC7F2202CCB5000C3BFAC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDCC7F1202CCB5000C3BFAC /* ViewController.swift */; };
 		ADDCC7F5202CCB5000C3BFAC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADDCC7F3202CCB5000C3BFAC /* Main.storyboard */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		3CEC356B203D3F5300885146 /* DiscView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscView.swift; sourceTree = "<group>"; };
+		3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularCollectionViewLayout.swift; sourceTree = "<group>"; };
 		ADDCC7EC202CCB5000C3BFAC /* PartyTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PartyTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ADDCC7F1202CCB5000C3BFAC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */,
 				ADDCC7F1202CCB5000C3BFAC /* ViewController.swift */,
 				3CEC356B203D3F5300885146 /* DiscView.swift */,
+				3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */,
 				ADDCC812202CCBBB00C3BFAC /* Utility.swift */,
 				ADDCC7F3202CCB5000C3BFAC /* Main.storyboard */,
 				ADDCC7F9202CCB5000C3BFAC /* Assets.xcassets */,
@@ -211,6 +214,7 @@
 				ADDCC813202CCBBB00C3BFAC /* Utility.swift in Sources */,
 				ADDCC7F8202CCB5000C3BFAC /* PartyTime.xcdatamodeld in Sources */,
 				ADDCC7F2202CCB5000C3BFAC /* ViewController.swift in Sources */,
+				3CED4C2A204026BB00F7BCDB /* CircularCollectionViewLayout.swift in Sources */,
 				ADDCC7F0202CCB5000C3BFAC /* AppDelegate.swift in Sources */,
 				3CEC356C203D3F5300885146 /* DiscView.swift in Sources */,
 			);

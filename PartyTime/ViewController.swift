@@ -9,16 +9,18 @@
 import UIKit
 import MediaPlayer
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     var discView: DiscView = {
-        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2 + 20, height: UIScreen.main.bounds.height - 10)
+        // Setting Frame
+        let width = UIScreen.main.bounds.width + 60
+        let frame = CGRect(x: 0, y: 0, width: width, height: width)
         let discView = DiscView(frame: frame)
         discView.clipsToBounds = false
         discView.translatesAutoresizingMaskIntoConstraints = false
         discView.backgroundColor = .lightGray
-//        discView.layer.cornerRadius = frame.width / 2
-//        discView.layer.masksToBounds = true
+        discView.layer.cornerRadius = frame.width / 2
+        discView.layer.masksToBounds = true
         return discView
     }()
 
@@ -33,20 +35,36 @@ class ViewController: UIViewController {
     
     func createDiscView() {
         self.view.addSubview(discView)
-        discView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        discView.centerXAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         discView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        discView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - 20).isActive = true
-        discView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 2 + 20).isActive = true
+        discView.heightAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
+        discView.widthAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(enlargeDiscView))
         tapGesture.numberOfTapsRequired = 1
+        tapGesture.delegate = self
         discView.isUserInteractionEnabled = true
         discView.addGestureRecognizer(tapGesture)
     }
     
     @objc func enlargeDiscView() {
-        print("Tapped on View")
-        self.discView.paintDisc()
+
+        if self.discView.smallDiscModeOn {
+            
+            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+                self.discView.transform = CGAffineTransform(scaleX: 1.65, y: 1.65)
+            }, completion: nil)
+            
+            self.discView.smallDiscModeOn = false
+        } else {
+            
+            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+                self.discView.transform = CGAffineTransform.identity
+            }, completion: nil)
+            
+            self.discView.smallDiscModeOn = true
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -55,4 +73,3 @@ class ViewController: UIViewController {
 
 
 }
-
