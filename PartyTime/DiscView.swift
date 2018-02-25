@@ -8,15 +8,79 @@
 
 import UIKit
 
-class DiscView: UIView, UIGestureRecognizerDelegate {
+class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource {
+    
+    var imageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = UIImage(named: "artWork.jpg")
+        iv.contentMode = .scaleAspectFill
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        return iv
+    }()
+    
+    var songsCollectionView: UICollectionView?
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 6
+    }
+    let colors = [UIColor.red, UIColor.lightGray, UIColor.orange, UIColor.darkGray, UIColor.orange, UIColor.brown]
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let collectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "myCell", for: indexPath) as! CircularColectionViewCell
+        collectionViewCell.backgroundColor = .clear
+        if indexPath.row == 0 {
+            collectionViewCell.label.text = "Gone Too Soon"
+        } else if indexPath.row == 1 {
+            collectionViewCell.label.text = "Remember the time"
+        } else {
+            collectionViewCell.label.text = "Gone Too Soon, by till the"
+        }
+        
+        return collectionViewCell
+    }
+    
 
-    var smallDiscModeOn = true
+    var smallDiscModeOn = true {
+        didSet {
+            if !smallDiscModeOn {
+                initialiseCollectionView()
+            } else {
+                removeCollectionViewFromSuperView()
+            }
+        }
+    }
+    
+    
     var fromEnlargedState = false
     
     var smallDiscFrame: CGRect = {
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 2 + 20, height: UIScreen.main.bounds.height)
         return frame
     }()
+    
+    func removeCollectionViewFromSuperView() {
+        if songsCollectionView != nil {
+            UIView.animate(withDuration: 2.0, animations: {
+                self.songsCollectionView?.removeFromSuperview()
+            })
+        }
+    }
+    
+    func initialiseCollectionView() {
+        let layout = CircularCollectionViewLayout()
+        let myCollectionView = ItemsCollectionView(frame: bounds, collectionViewLayout: layout)
+        myCollectionView.backgroundColor = .clear
+        myCollectionView.dataSource = self
+        myCollectionView.register(CircularColectionViewCell.self, forCellWithReuseIdentifier: "myCell")
+        addSubview(myCollectionView)
+        myCollectionView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        myCollectionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        myCollectionView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        myCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        songsCollectionView = myCollectionView
+        myCollectionView.showsVerticalScrollIndicator = false
+//        myCollectionView.backgroundColor = .lightGray
+    }
     
     lazy var centerOfDisc: CGPoint = {
         let center = CGPoint(x: bounds.width/2, y: bounds.height / 2)
@@ -36,6 +100,11 @@ class DiscView: UIView, UIGestureRecognizerDelegate {
     // MARK: - View Life Cycle Methods
     override init(frame: CGRect) {
         super.init(frame: frame)
+        addSubview(imageView)
+        imageView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        imageView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        imageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -291,4 +360,57 @@ extension UIView {
         self.layer.mask = maskLayer
     }
 
+}
+
+
+class ItemsCollectionView: UICollectionView {
+    
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+}
+
+
+class CircularColectionViewCell: UICollectionViewCell {
+    
+    var label: UILabel = {
+        let iv = UILabel()
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        return iv
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addLabel()
+    }
+    
+    func addLabel() {
+        addSubview(label)
+        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        label.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5).isActive = true
+        label.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        label.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
+        label.font = UIFont.boldSystemFont(ofSize: 11)
+        label.textColor = .white
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+    }
+    
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        super.apply(layoutAttributes)
+        let circularlayoutAttributes = layoutAttributes as! CircularCollectionViewLayoutAttributes
+        self.layer.anchorPoint = circularlayoutAttributes.anchorPoint
+        self.center.y += (circularlayoutAttributes.anchorPoint.y - 0.5) * self.bounds.height
+    }
+    
 }
