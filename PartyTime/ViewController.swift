@@ -11,6 +11,8 @@ import MediaPlayer
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
+    var barButtonRightAnchorConstraint: NSLayoutConstraint?
+    
     var discView: DiscView = {
         // Setting Frame
         let width = UIScreen.main.bounds.width + 60
@@ -18,14 +20,30 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         let discView = DiscView(frame: frame)
         discView.clipsToBounds = false
         discView.translatesAutoresizingMaskIntoConstraints = false
-        discView.backgroundColor = .lightGray
+        discView.backgroundColor = .clear
         discView.layer.cornerRadius = frame.width / 2
         discView.layer.masksToBounds = true
         return discView
     }()
+    
+    lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let backImage = UIImage(named: "backIcon")
+        button.setImage(backImage, for: UIControlState.normal)
+        button.addTarget(self, action: #selector(compressDisc), for: .touchUpInside)
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.addSubview(backButton)
+        let guide = self.view.safeAreaLayoutGuide
+        backButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        backButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        barButtonRightAnchorConstraint = backButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 50)
+        barButtonRightAnchorConstraint?.isActive = true
+        backButton.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -15).isActive = true
     }
     
     override func loadView() {
@@ -43,6 +61,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(enlargeDiscView))
         tapGesture.numberOfTapsRequired = 1
         tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
         discView.isUserInteractionEnabled = true
         discView.addGestureRecognizer(tapGesture)
     }
@@ -56,19 +75,43 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             }, completion: nil)
             
             self.discView.smallDiscModeOn = false
-        } else {
-            
-            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
-                self.discView.transform = CGAffineTransform.identity
-            }, completion: nil)
-            
-            self.discView.smallDiscModeOn = true
+            addButtonToSuperView()
         }
         
+    }
+    
+    @objc func compressDisc() {
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: {
+            self.discView.transform = CGAffineTransform.identity
+        }, completion: nil)
+        
+        self.discView.smallDiscModeOn = true
+        removeButtonfromSuperView()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func addButtonToSuperView() {
+        
+        UIView.animate(withDuration:0.8, animations: {
+            self.view.layoutIfNeeded()
+        }) { (_) in
+            self.barButtonRightAnchorConstraint?.constant = -15
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+        }
+        
+        
+    }
+    
+    func removeButtonfromSuperView() {
+        barButtonRightAnchorConstraint?.constant = 50
+        UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
     }
 
 

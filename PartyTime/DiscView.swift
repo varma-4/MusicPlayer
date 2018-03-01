@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import MediaPlayer
 
-class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource {
+class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    var musicAlbum = [MPMediaItem]()
     
     var imageView: UIImageView = {
         let iv = UIImageView()
@@ -21,21 +24,47 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
     var songsCollectionView: UICollectionView?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 6
+        return 4
     }
     let colors = [UIColor.red, UIColor.lightGray, UIColor.orange, UIColor.darkGray, UIColor.orange, UIColor.brown]
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Clicked item at IndexPath: \(indexPath.row)")
+        
+        let cell = (collectionView.cellForItem(at: indexPath) as? CircularColectionViewCell)
+        let layoutAttributes = cell?.cellLayoutAttributes as? CircularCollectionViewLayoutAttributes
+        
+        
+        print(layoutAttributes?.angle.radiansToDegrees)
+        let angle = layoutAttributes?.angle.radiansToDegrees
+        if angle! == 0.0 {
+            // Just highlight
+        } else if angle! > 0.0 {
+            if indexPath.row == 0 {
+                let inde = IndexPath(item: musicAlbum.count, section: 0)
+                collectionView.scrollToItem(at: inde, at: .bottom, animated: true)
+            } else {
+                
+            }
+            collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+
+        } else {
+            collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+        }
+        
+    }
+    
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        return true
+    }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let collectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "myCell", for: indexPath) as! CircularColectionViewCell
         collectionViewCell.backgroundColor = .clear
-        if indexPath.row == 0 {
-            collectionViewCell.label.text = "Gone Too Soon"
-        } else if indexPath.row == 1 {
-            collectionViewCell.label.text = "Remember the time"
-        } else {
-            collectionViewCell.label.text = "Gone Too Soon, by till the"
-        }
-        
+        collectionViewCell.label.text = musicAlbum[indexPath.row].title
+        collectionViewCell.subTitleLabel.text = musicAlbum[indexPath.row].artist
+
         return collectionViewCell
     }
     
@@ -69,8 +98,15 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
     func initialiseCollectionView() {
         let layout = CircularCollectionViewLayout()
         let myCollectionView = ItemsCollectionView(frame: bounds, collectionViewLayout: layout)
+        myCollectionView.translatesAutoresizingMaskIntoConstraints = false
         myCollectionView.backgroundColor = .clear
         myCollectionView.dataSource = self
+        myCollectionView.delegate = self
+        myCollectionView.showsVerticalScrollIndicator = false
+        myCollectionView.scrollIndicatorInsets = myCollectionView.contentInset
+        myCollectionView.isUserInteractionEnabled = true
+        myCollectionView.allowsSelection = true
+        
         myCollectionView.register(CircularColectionViewCell.self, forCellWithReuseIdentifier: "myCell")
         addSubview(myCollectionView)
         myCollectionView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
@@ -78,7 +114,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
         myCollectionView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         myCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         songsCollectionView = myCollectionView
-        myCollectionView.showsVerticalScrollIndicator = false
+        
 //        myCollectionView.backgroundColor = .lightGray
     }
     
@@ -105,6 +141,33 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
         imageView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         imageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        if MPMediaLibrary.authorizationStatus() == .notDetermined {
+            MPMediaLibrary.requestAuthorization({ (_) in
+                self.getAlbums()
+            })
+        } else {
+            getAlbums()
+        }
+    }
+    
+    func getAlbums() {
+        let albumQuery = MPMediaQuery.albums()
+        guard let albums = albumQuery.collections else {
+            print("No albums avalibale")
+            return
+        }
+        print("Albums Count: \(albums.count)\n\n\n")
+        
+        for eachAlbum in albums {
+            if eachAlbum.items.count < 4 {
+                continue
+            }
+            for eachSong in eachAlbum.items {
+                musicAlbum.append(eachSong)
+            }
+            print("Album fetched")
+            break
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -114,10 +177,13 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
     override func draw(_ rect: CGRect) {
         if smallDiscModeOn {
             
+            
             // Small Disc Outer semicircle
             let smallDiscOuterShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
+
             // Small Disc Inner Semicircle
             let smallDiscInnerShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: .white)
+        
             
             if fromEnlargedState {
                 
@@ -153,8 +219,8 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
                 
                 fromEnlargedState = false
             } else {
-                // Animate Outer Semicircle
-                let smallDiscAnimGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(smallDiscPath().outer.radius))
+//                 Animate Outer Semicircle
+                let smallDiscAnimGroup = getAnimationGroup(withLowerLimit: Int(smallDiscPath().inner.radius), upperLimit: Int(smallDiscPath().outer.radius))
 
                 // Add animationGroup to Outer semicircle Layer
                 smallDiscOuterShapeLayer.add(smallDiscAnimGroup, forKey: nil)
@@ -325,7 +391,8 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource 
 extension UIColor {
     
     class func partyTimeBlue() -> UIColor {
-        let color = UIColor.init(red: 51/255, green: 138/255, blue: 248/255, alpha: 1)
+//        let color = UIColor.init(red: 51/255, green: 138/255, blue: 248/255, alpha: 1)
+        let color = UIColor.init(red: 0/255, green: 145/255, blue: 147/255, alpha: 1)
         return color
     }
     
@@ -377,25 +444,40 @@ class ItemsCollectionView: UICollectionView {
 
 class CircularColectionViewCell: UICollectionViewCell {
     
+    var cellLayoutAttributes: UICollectionViewLayoutAttributes?
+    
     var label: UILabel = {
         let iv = UILabel()
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
     
+    var subTitleLabel: UILabel = {
+        let subTitleLabel = UILabel()
+        subTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        return subTitleLabel
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addLabel()
+        addLabels()
     }
     
-    func addLabel() {
+    func addLabels() {
         addSubview(label)
-        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        addSubview(subTitleLabel)
+        label.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
         label.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5).isActive = true
-        label.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        label.bottomAnchor.constraint(equalTo: self.subTitleLabel.topAnchor, constant: 3).isActive = true
         label.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
-        label.font = UIFont.boldSystemFont(ofSize: 11)
-        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.textColor = UIColor.black
+        
+        subTitleLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5).isActive = true
+        subTitleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
+        subTitleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
+        subTitleLabel.font = UIFont.boldSystemFont(ofSize: 9)
+        subTitleLabel.textColor = .darkGray
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -408,9 +490,27 @@ class CircularColectionViewCell: UICollectionViewCell {
     
     override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         super.apply(layoutAttributes)
+        cellLayoutAttributes = layoutAttributes
         let circularlayoutAttributes = layoutAttributes as! CircularCollectionViewLayoutAttributes
         self.layer.anchorPoint = circularlayoutAttributes.anchorPoint
         self.center.y += (circularlayoutAttributes.anchorPoint.y - 0.5) * self.bounds.height
     }
     
+}
+
+extension FloatingPoint {
+    var degreesToRadians: Self { return self * .pi / 180 }
+    var radiansToDegrees: Self { return self * 180 / .pi }
+}
+
+extension UIScrollView {
+    func scrollToTopp(animated: Bool) {
+        setContentOffset(CGPoint(x: 0, y: -10),
+                         animated: animated)
+    }
+    
+    func scrollToBottomm(animated: Bool) {
+        setContentOffset(CGPoint(x: 0, y: CGFloat.greatestFiniteMagnitude),
+                         animated: animated)
+    }
 }

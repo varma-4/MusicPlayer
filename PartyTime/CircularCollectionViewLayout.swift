@@ -94,7 +94,7 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-        return CGSize(width: (collectionView?.bounds.width)!, height: 400 + (CGFloat((collectionView?.numberOfItems(inSection: 0))!) * itemSize.height))
+        return CGSize(width: (collectionView?.bounds.width)!, height:   (CGFloat((collectionView?.numberOfItems(inSection: 0))!) * itemSize.height) * 3)
     }
     // Let's fix our content Size to frame of the Disc 
 

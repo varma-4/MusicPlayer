@@ -17,7 +17,26 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coldplay" translatesAutoresizingMaskIntoConstraints="NO" id="dhs-LS-RPg">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                            <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hnc-ZP-CzB">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dhs-LS-RPg" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="1K8-Gi-6DG"/>
+                            <constraint firstItem="dhs-LS-RPg" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="25m-vY-2Cd"/>
+                            <constraint firstItem="dhs-LS-RPg" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Kku-pP-usI"/>
+                            <constraint firstItem="Hnc-ZP-CzB" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="S1Z-OW-lXQ"/>
+                            <constraint firstItem="Hnc-ZP-CzB" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Szq-3C-KkR"/>
+                            <constraint firstItem="Hnc-ZP-CzB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Tfl-sy-Sl0"/>
+                            <constraint firstItem="dhs-LS-RPg" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="fvC-Ad-nrq"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Hnc-ZP-CzB" secondAttribute="bottom" id="t5k-Ro-fJm"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
@@ -26,4 +45,7 @@
             <point key="canvasLocation" x="117.59999999999999" y="118.29085457271366"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="coldplay" width="768" height="768"/>
+    </resources>
 </document>
