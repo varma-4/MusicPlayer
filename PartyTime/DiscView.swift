@@ -24,34 +24,86 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     var songsCollectionView: UICollectionView?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return musicAlbum.count
     }
     let colors = [UIColor.red, UIColor.lightGray, UIColor.orange, UIColor.darkGray, UIColor.orange, UIColor.brown]
+    
+    var scrollAlreadyDone = false
+    var alreadyHiglighted = false
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Clicked item at IndexPath: \(indexPath.row)")
         
         let cell = (collectionView.cellForItem(at: indexPath) as? CircularColectionViewCell)
         let layoutAttributes = cell?.cellLayoutAttributes as? CircularCollectionViewLayoutAttributes
-        
-        
-        print(layoutAttributes?.angle.radiansToDegrees)
-        let angle = layoutAttributes?.angle.radiansToDegrees
-        if angle! == 0.0 {
-            // Just highlight
-        } else if angle! > 0.0 {
-            if indexPath.row == 0 {
-                let inde = IndexPath(item: musicAlbum.count, section: 0)
-                collectionView.scrollToItem(at: inde, at: .bottom, animated: true)
-            } else {
-                
-            }
-            collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
-            collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
 
+        let angle = layoutAttributes?.angle.radiansToDegrees
+        
+        print(angle!)
+        if !scrollAlreadyDone {
+            if angle! > 0.0 {
+                let yShift = CGFloat(50 * indexPath.row)
+                collectionView.setContentOffset(CGPoint(x: (cell?.bounds.minX)!, y: (cell?.bounds.minY)! + yShift), animated: true)
+                scrollAlreadyDone = true
+            }
         } else {
-            collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            collectionView.setContentOffset(CGPoint(x: (cell?.bounds.minX)!, y: (cell?.bounds.minY)! + -50), animated: true)
+            scrollAlreadyDone = false
         }
+        if !alreadyHiglighted {
+            highlightItem(cellWidth: 140)
+            alreadyHiglighted = true
+        }
+        
+    }
+    
+    func highlightItem(cellWidth: CGFloat) {
+//        let path = UIBezierPath()
+//        let innerCircleRadius = (smallDiscPath().inner.radius * 2) / 2
+//        let outerMinusInnerRadius = (smallDiscPath().outer.radius - smallDiscPath().inner.radius) / 2
+//        print(outerMinusInnerRadius)
+//        let center = CGPoint(x: bounds.width/2 + innerCircleRadius, y: bounds.height/2)
+//
+//
+//        let topPoint = CGPoint(x: center.x, y: center.y - 15)
+//        let dot =  UIView(frame: CGRect(x: topPoint.x, y: topPoint.y, width: 5, height: 5))
+//        dot.backgroundColor = .black
+//        addSubview(dot)
+//
+//        let bottomPoint = CGPoint(x: center.x, y: center.y + 15)
+//        let dot1 =  UIView(frame: CGRect(x: bottomPoint.x, y: bottomPoint.y, width: 5, height: 5))
+//        dot1.backgroundColor = .black
+//        addSubview(dot1)
+//
+//        let topRight = CGPoint(x: center.x + cellWidth + 5, y: center.y - 25)
+//        let dot2 =  UIView(frame: CGRect(x: topRight.x, y: topRight.y, width: 5, height: 5))
+//        dot2.backgroundColor = .black
+//        addSubview(dot2)
+//
+//        let bottomRight = CGPoint(x: center.x + cellWidth + 5, y: center.y + 25)
+//        let dot3 =  UIView(frame: CGRect(x: bottomRight.x, y: bottomRight.y, width: 5, height: 5))
+//        dot3.backgroundColor = .black
+//        addSubview(dot3)
+        
+        self.drawCircle(center: centerOfDisc, radius: 150, startAngle: CGFloat(M_PI * 0.06), endAngle: CGFloat(M_PI * -0.06), color: UIColor.hightLightColor())
+    }
+    
+    func drawCircle(center: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle:CGFloat, color: UIColor) {
+        
+        let circlePath = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle:endAngle, clockwise: false)
+        
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = circlePath.cgPath
+        
+        //change the fill color
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        //you can change the stroke color
+        shapeLayer.strokeColor = color.cgColor
+        //you can change the line width
+        shapeLayer.lineWidth = 160
+        shapeLayer.opacity = 0.3
+        
+        layer.addSublayer(shapeLayer)
         
     }
     
@@ -183,6 +235,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
 
             // Small Disc Inner Semicircle
             let smallDiscInnerShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: .white)
+            
         
             
             if fromEnlargedState {
@@ -396,6 +449,11 @@ extension UIColor {
         return color
     }
     
+    class func hightLightColor() -> UIColor {
+        let color = UIColor.init(red: 0/255, green: 120/255, blue: 127/255, alpha: 1)
+        return color
+    }
+    
 }
 
 extension UIView {
@@ -471,13 +529,13 @@ class CircularColectionViewCell: UICollectionViewCell {
         label.bottomAnchor.constraint(equalTo: self.subTitleLabel.topAnchor, constant: 3).isActive = true
         label.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
         label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         
         subTitleLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5).isActive = true
-        subTitleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
+        subTitleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -12).isActive = true
         subTitleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
         subTitleLabel.font = UIFont.boldSystemFont(ofSize: 9)
-        subTitleLabel.textColor = .darkGray
+        subTitleLabel.textColor = .white
     }
     
     required init?(coder aDecoder: NSCoder) {
