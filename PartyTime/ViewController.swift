@@ -9,9 +9,16 @@
 import UIKit
 import MediaPlayer
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate {
+class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImageViewProtocol {
     
+    @IBOutlet weak var albumImageView: UIImageView!
     var barButtonRightAnchorConstraint: NSLayoutConstraint?
+    
+    func changeImageTo(album: MPMediaItem) {
+        let artwork = album.value(forProperty: MPMediaItemPropertyArtwork) as? MPMediaItemArtwork
+        let image = artwork?.image(at: CGSize(width: (artwork?.bounds.width)!, height: (artwork?.bounds.height)!))
+        albumImageView.image = image
+    }
     
     var discView: DiscView = {
         // Setting Frame
@@ -37,6 +44,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.discView.delegate = self
         self.view.addSubview(backButton)
         let guide = self.view.safeAreaLayoutGuide
         backButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
@@ -53,6 +61,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     
     func createDiscView() {
         self.view.addSubview(discView)
+//        self.discView.delegate = self
         discView.centerXAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         discView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         discView.heightAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
@@ -87,6 +96,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         
         self.discView.smallDiscModeOn = true
         removeButtonfromSuperView()
+        self.discView.highlightedShapeLayer?.removeFromSuperlayer()
+        self.discView.alreadyHiglighted = false
     }
 
     override func didReceiveMemoryWarning() {

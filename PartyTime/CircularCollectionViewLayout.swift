@@ -29,7 +29,7 @@ class CircularCollectionViewLayoutAttributes: UICollectionViewLayoutAttributes {
 
 class CircularCollectionViewLayout: UICollectionViewLayout {
     
-    let itemSize = CGSize(width: 140, height: 50)
+    let itemSize = CGSize(width: 160, height: 50)
     // Width should be outer- inner radius
     
     var radius: CGFloat = 60 {
@@ -49,7 +49,7 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
     }
     
     var anglePerItem: CGFloat {
-        return atan(itemSize.height / radius) - 0.32
+        return atan(itemSize.height / 60) - 0.32
     }
 
     var attributesList = [CircularCollectionViewLayoutAttributes]()
@@ -75,7 +75,7 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
             
             // 3
             attributes.angle = self.angle + (self.anglePerItem * CGFloat(i))
-            attributes.anchorPoint = CGPoint(x: -0.5, y: 0.5)
+            attributes.anchorPoint = CGPoint(x: -0.35, y: 0.5)
             return attributes
         }
 
@@ -94,7 +94,10 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-        return CGSize(width: (collectionView?.bounds.width)!, height:   (CGFloat((collectionView?.numberOfItems(inSection: 0))!) * itemSize.height) * 3)
+         print("Height: \((collectionView?.bounds.height)! * 1.65)")
+        return CGSize(width: (collectionView?.bounds.width)!, height: (collectionView?.bounds.height)! * 1.65)
+       
+//        return CGSize(width: (collectionView?.bounds.width)!, height:   (CGFloat((collectionView?.numberOfItems(inSection: 0))!) * itemSize.height) * 3)
     }
     // Let's fix our content Size to frame of the Disc 
 

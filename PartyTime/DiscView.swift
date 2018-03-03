@@ -9,9 +9,20 @@
 import UIKit
 import MediaPlayer
 
+protocol changeImageViewProtocol {
+    func changeImageTo(album: MPMediaItem)
+}
+
 class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
     
+    var delegate: changeImageViewProtocol? {
+        didSet {
+            delegate!.changeImageTo(album: musicAlbum.first!)
+        }
+    }
+    
     var musicAlbum = [MPMediaItem]()
+    var highlightedShapeLayer: CAShapeLayer?
     
     var imageView: UIImageView = {
         let iv = UIImageView()
@@ -26,6 +37,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return musicAlbum.count
     }
+    
     let colors = [UIColor.red, UIColor.lightGray, UIColor.orange, UIColor.darkGray, UIColor.orange, UIColor.brown]
     
     var scrollAlreadyDone = false
@@ -40,71 +52,81 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         let angle = layoutAttributes?.angle.radiansToDegrees
         
         print(angle!)
-        if !scrollAlreadyDone {
-            if angle! > 0.0 {
-                let yShift = CGFloat(50 * indexPath.row)
-                collectionView.setContentOffset(CGPoint(x: (cell?.bounds.minX)!, y: (cell?.bounds.minY)! + yShift), animated: true)
-                scrollAlreadyDone = true
-            }
-        } else {
-            collectionView.setContentOffset(CGPoint(x: (cell?.bounds.minX)!, y: (cell?.bounds.minY)! + -50), animated: true)
-            scrollAlreadyDone = false
-        }
+        let yShift = getYShiftContentoffset(for: indexPath)
+        collectionView.setContentOffset(CGPoint(x: (cell?.bounds.minX)!, y: (cell?.bounds.minY)! + yShift), animated: true)
+        
         if !alreadyHiglighted {
-            highlightItem(cellWidth: 140)
+            highlightItem(cell: cell!)
             alreadyHiglighted = true
         }
         
     }
     
-    func highlightItem(cellWidth: CGFloat) {
-//        let path = UIBezierPath()
-//        let innerCircleRadius = (smallDiscPath().inner.radius * 2) / 2
-//        let outerMinusInnerRadius = (smallDiscPath().outer.radius - smallDiscPath().inner.radius) / 2
-//        print(outerMinusInnerRadius)
-//        let center = CGPoint(x: bounds.width/2 + innerCircleRadius, y: bounds.height/2)
-//
-//
-//        let topPoint = CGPoint(x: center.x, y: center.y - 15)
-//        let dot =  UIView(frame: CGRect(x: topPoint.x, y: topPoint.y, width: 5, height: 5))
-//        dot.backgroundColor = .black
-//        addSubview(dot)
-//
-//        let bottomPoint = CGPoint(x: center.x, y: center.y + 15)
-//        let dot1 =  UIView(frame: CGRect(x: bottomPoint.x, y: bottomPoint.y, width: 5, height: 5))
-//        dot1.backgroundColor = .black
-//        addSubview(dot1)
-//
-//        let topRight = CGPoint(x: center.x + cellWidth + 5, y: center.y - 25)
-//        let dot2 =  UIView(frame: CGRect(x: topRight.x, y: topRight.y, width: 5, height: 5))
-//        dot2.backgroundColor = .black
-//        addSubview(dot2)
-//
-//        let bottomRight = CGPoint(x: center.x + cellWidth + 5, y: center.y + 25)
-//        let dot3 =  UIView(frame: CGRect(x: bottomRight.x, y: bottomRight.y, width: 5, height: 5))
-//        dot3.backgroundColor = .black
-//        addSubview(dot3)
-        
-        self.drawCircle(center: centerOfDisc, radius: 150, startAngle: CGFloat(M_PI * 0.06), endAngle: CGFloat(M_PI * -0.06), color: UIColor.hightLightColor())
+    func getYShiftContentoffset(for indepath: IndexPath) -> CGFloat {
+        var contentHeight = 718
+        if musicAlbum.count <= 5 {
+            contentHeight = 1100
+            let cellShiftHeight = CGFloat( contentHeight / musicAlbum.count)
+            var cellYShiftContentHeight = (cellShiftHeight / 2)
+            if musicAlbum.count >= 2 && indepath.row >= 1 {
+                cellYShiftContentHeight -= 40.0
+            }
+            return cellYShiftContentHeight * CGFloat(indepath.row)
+        } else {
+            let cellShiftHeight = CGFloat( contentHeight / musicAlbum.count)
+            var cellYShiftContentHeight = (cellShiftHeight / 2)
+            if indepath.row > 1 {
+                cellYShiftContentHeight -= 4.0
+            }
+            return cellYShiftContentHeight * CGFloat(indepath.row)
+        }
     }
     
-    func drawCircle(center: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle:CGFloat, color: UIColor) {
+    func getAlbums() {
+        let albumQuery = MPMediaQuery.albums()
+        guard let albums = albumQuery.collections else {
+            print("No albums avalibale")
+            return
+        }
+        print("Albums Count: \(albums.count)\n\n\n")
+        
+        for eachAlbum in albums {
+            if eachAlbum.items.count != 2 {
+                continue
+            }
+            for eachSong in eachAlbum.items {
+                musicAlbum.append(eachSong)
+            }
+            
+            print("Album fetched")
+            break
+        }
+        
+    }
+    
+    func highlightItem(cell: UICollectionViewCell) {
+        self.drawPie(center: centerOfDisc, radius: 152.5, startAngle: CGFloat(.pi * 0.06), endAngle: CGFloat(.pi * -0.06), color: UIColor.hightLightColor(), cell: cell)
+    }
+    
+    func drawPie(center: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle:CGFloat, color: UIColor, cell: UICollectionViewCell) {
         
         let circlePath = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle:endAngle, clockwise: false)
         
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.path = circlePath.cgPath
+        highlightedShapeLayer = CAShapeLayer()
+        guard let highlightedShapeLayer = highlightedShapeLayer else {
+            return
+        }
         
+        highlightedShapeLayer.path = circlePath.cgPath
         //change the fill color
-        shapeLayer.fillColor = UIColor.clear.cgColor
+        highlightedShapeLayer.fillColor = UIColor.clear.cgColor
         //you can change the stroke color
-        shapeLayer.strokeColor = color.cgColor
+        highlightedShapeLayer.strokeColor = color.cgColor
         //you can change the line width
-        shapeLayer.lineWidth = 160
-        shapeLayer.opacity = 0.3
-        
-        layer.addSublayer(shapeLayer)
-        
+        highlightedShapeLayer.lineWidth = 200
+        highlightedShapeLayer.opacity = 0.3
+//        cell.layer.addSublayer(highlightedShapeLayer)
+        layer.addSublayer(highlightedShapeLayer)
     }
     
     func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
@@ -202,26 +224,6 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         }
     }
     
-    func getAlbums() {
-        let albumQuery = MPMediaQuery.albums()
-        guard let albums = albumQuery.collections else {
-            print("No albums avalibale")
-            return
-        }
-        print("Albums Count: \(albums.count)\n\n\n")
-        
-        for eachAlbum in albums {
-            if eachAlbum.items.count < 4 {
-                continue
-            }
-            for eachSong in eachAlbum.items {
-                musicAlbum.append(eachSong)
-            }
-            print("Album fetched")
-            break
-        }
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -235,6 +237,21 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
 
             // Small Disc Inner Semicircle
             let smallDiscInnerShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: .white)
+            let radi = CGFloat(110)
+            let circlePath = UIBezierPath(arcCenter: centerOfDisc, radius: radi, startAngle: CGFloat(.pi * 0.0), endAngle:CGFloat(.pi * 2.0), clockwise: true)
+            
+            let shapeLayer = CAShapeLayer()
+            
+            
+            shapeLayer.path = circlePath.cgPath
+            //change the fill color
+            shapeLayer.fillColor = UIColor.clear.cgColor
+            //you can change the stroke color
+            shapeLayer.strokeColor = UIColor.partyTimeBlue().cgColor
+            //you can change the line width
+            shapeLayer.lineWidth = smallDiscPath().outer.radius - radi
+            shapeLayer.opacity = 0.8
+            //        cell.layer.addSublayer(highlightedShapeLayer)
             
         
             
@@ -279,8 +296,9 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
                 smallDiscOuterShapeLayer.add(smallDiscAnimGroup, forKey: nil)
 
                 // First paint the Outer semicircle, followed by inner semicircle
-                addLayer(shapeLayer: smallDiscOuterShapeLayer)
-                addLayer(shapeLayer: smallDiscInnerShapeLayer)
+//                addLayer(shapeLayer: smallDiscOuterShapeLayer)
+//                addLayer(shapeLayer: smallDiscInnerShapeLayer)
+                layer.addSublayer(shapeLayer)
             }
         } else {
             layer.sublayers = nil
