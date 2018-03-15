@@ -15,9 +15,23 @@ protocol changeImageViewProtocol {
 
 class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
     
+    let width = UIScreen.main.bounds.width + 120
+    
+    lazy var volumeView: CircularSlider = {
+        
+        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.width)
+        let volumeView = CircularSlider(frame: frame)
+        volumeView.translatesAutoresizingMaskIntoConstraints = false
+        volumeView.backgroundColor = .clear
+        volumeView.isUserInteractionEnabled = true
+        return volumeView
+    }()
+    
     var delegate: changeImageViewProtocol? {
         didSet {
-            delegate!.changeImageTo(album: musicAlbum.first!)
+            if delegate != nil && musicAlbum.count > 0 {
+              delegate?.changeImageTo(album: musicAlbum.first!)
+            }
         }
     }
     
@@ -222,6 +236,11 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         } else {
             getAlbums()
         }
+//        addSubview(volumeView)
+//        volumeView.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 20).isActive = true
+//        volumeView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -20).isActive = true
+//        volumeView.heightAnchor.constraint(equalToConstant: width).isActive = true
+//        volumeView.widthAnchor.constraint(equalToConstant: width - 20).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -229,100 +248,104 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     }
     
     override func draw(_ rect: CGRect) {
-        if smallDiscModeOn {
-            
-            
-            // Small Disc Outer semicircle
-            let smallDiscOuterShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-
-            // Small Disc Inner Semicircle
-            let smallDiscInnerShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: .white)
-            let radi = CGFloat(110)
-            let circlePath = UIBezierPath(arcCenter: centerOfDisc, radius: radi, startAngle: CGFloat(.pi * 0.0), endAngle:CGFloat(.pi * 2.0), clockwise: true)
-            
-            let shapeLayer = CAShapeLayer()
-            
-            
-            shapeLayer.path = circlePath.cgPath
-            //change the fill color
-            shapeLayer.fillColor = UIColor.clear.cgColor
-            //you can change the stroke color
-            shapeLayer.strokeColor = UIColor.partyTimeBlue().cgColor
-            //you can change the line width
-            shapeLayer.lineWidth = smallDiscPath().outer.radius - radi
-            shapeLayer.opacity = 0.8
+        let radi = CGFloat(135)
+        let circlePath = UIBezierPath(arcCenter: centerOfDisc, radius: radi, startAngle: -CGFloat(Double.pi / 2), endAngle: CGFloat(Double.pi / 2), clockwise: true)
+        
+        let shapeLayer = CAShapeLayer()
+        
+        
+        shapeLayer.path = circlePath.cgPath
+        //change the fill color
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        //you can change the stroke color
+        shapeLayer.strokeColor = UIColor.partyTimeBlue().cgColor
+        //you can change the line width
+        print(smallDiscPath().outer.radius - radi)
+        print(frame.height)
+        shapeLayer.lineWidth = 165
+        shapeLayer.opacity = 0.8
+        layer.addSublayer(shapeLayer)
+//        if smallDiscModeOn {
+//
+//
+//            // Small Disc Outer semicircle
+//            let smallDiscOuterShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
+//
+//            // Small Disc Inner Semicircle
+//            let smallDiscInnerShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: .white)
+        
             //        cell.layer.addSublayer(highlightedShapeLayer)
             
         
             
-            if fromEnlargedState {
-                
-                let outerRangeCount = Int(enlargedDiscPath().outer.radius - smallDiscPath().outer.radius)
-                let innerRangeCount = Int(enlargedDiscPath().inner.radius - smallDiscPath().inner.radius + 20)
-                print(innerRangeCount)
-                // Get AnimationsGroup for enlargedDisc outer SemiCircle
-                let outerAnimsGroup = makeAnimationsGroupForEnlargedToSmall(withRange: outerRangeCount, intialRadius: enlargedDiscPath().outer.radius)
-    
-                // Get path for smallDisc Outer path
-                let animShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-                // Animate Enlarged to Small Disc
-                let animationGroupEnlargeToSmall = getAnimationGroup(withLowerLimit: 0, upperLimit: 0, animsGroup: outerAnimsGroup)
-                
-                // Add animationGroup to Outer Semicircle
-                animShapeLayer.add(animationGroupEnlargeToSmall, forKey: nil)
-                
-                // Get AnimationsGroup for enlargedDisc inner semicircle
-                let innerAnimsGroup = makeAnimationsGroupForEnlargedToSmall(withRange: innerRangeCount, intialRadius: enlargedDiscPath().inner.radius + 20)
-                
-                // Get path for smallDisc Inner path
-                let innerAnimShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: UIColor.white)
-                // Animate Enlarged to Small Disc Inner
-                let animationGroupEnlargeToSmallInner = getAnimationGroup(withLowerLimit: 0, upperLimit: 0, animsGroup: innerAnimsGroup)
-                
-                // Add animationGroup to Inner Semicircle
-                innerAnimShapeLayer.add(animationGroupEnlargeToSmallInner, forKey: nil)
-                
-                // Paint all the shapeLayers
-                addLayer(shapeLayer: smallDiscOuterShapeLayer)
-                addLayer(shapeLayer: animShapeLayer)
-                addLayer(shapeLayer: innerAnimShapeLayer)
-                
-                fromEnlargedState = false
-            } else {
-//                 Animate Outer Semicircle
-                let smallDiscAnimGroup = getAnimationGroup(withLowerLimit: Int(smallDiscPath().inner.radius), upperLimit: Int(smallDiscPath().outer.radius))
-
-                // Add animationGroup to Outer semicircle Layer
-                smallDiscOuterShapeLayer.add(smallDiscAnimGroup, forKey: nil)
-
-                // First paint the Outer semicircle, followed by inner semicircle
+//            if fromEnlargedState {
+//
+//                let outerRangeCount = Int(enlargedDiscPath().outer.radius - smallDiscPath().outer.radius)
+//                let innerRangeCount = Int(enlargedDiscPath().inner.radius - smallDiscPath().inner.radius + 20)
+//                print(innerRangeCount)
+//                // Get AnimationsGroup for enlargedDisc outer SemiCircle
+//                let outerAnimsGroup = makeAnimationsGroupForEnlargedToSmall(withRange: outerRangeCount, intialRadius: enlargedDiscPath().outer.radius)
+//
+//                // Get path for smallDisc Outer path
+//                let animShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
+//                // Animate Enlarged to Small Disc
+//                let animationGroupEnlargeToSmall = getAnimationGroup(withLowerLimit: 0, upperLimit: 0, animsGroup: outerAnimsGroup)
+//
+//                // Add animationGroup to Outer Semicircle
+//                animShapeLayer.add(animationGroupEnlargeToSmall, forKey: nil)
+//
+//                // Get AnimationsGroup for enlargedDisc inner semicircle
+//                let innerAnimsGroup = makeAnimationsGroupForEnlargedToSmall(withRange: innerRangeCount, intialRadius: enlargedDiscPath().inner.radius + 20)
+//
+//                // Get path for smallDisc Inner path
+//                let innerAnimShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: UIColor.white)
+//                // Animate Enlarged to Small Disc Inner
+//                let animationGroupEnlargeToSmallInner = getAnimationGroup(withLowerLimit: 0, upperLimit: 0, animsGroup: innerAnimsGroup)
+//
+//                // Add animationGroup to Inner Semicircle
+//                innerAnimShapeLayer.add(animationGroupEnlargeToSmallInner, forKey: nil)
+//
+//                // Paint all the shapeLayers
 //                addLayer(shapeLayer: smallDiscOuterShapeLayer)
-//                addLayer(shapeLayer: smallDiscInnerShapeLayer)
-                layer.addSublayer(shapeLayer)
-            }
-        } else {
-            layer.sublayers = nil
-
-            // Outer Semicirle
-            let enlargedDiscOuterShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-
-            // Animate Outer Semicircle
-            let enlargedOuterAnimationGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().outer.radius))
-            // Add Animation Object to Outer Semicircle
-            enlargedDiscOuterShapeLayer.add(enlargedOuterAnimationGroup, forKey: nil)
-
-            // Inner SemiCircle
-            let enlargedDiscInnerShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().inner.path, fillColor: .white)
-            // Animate Inner Semicircle
-            let enlargedInnerAnimationsGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().inner.radius))
-            // Add Animation Group to shapeLayer
-            enlargedDiscInnerShapeLayer.add(enlargedInnerAnimationsGroup, forKey: nil)
-
-            // First paint the Outer semicircle, followed by inner semicircle
-            addLayer(shapeLayer: enlargedDiscOuterShapeLayer)
-            addLayer(shapeLayer: enlargedDiscInnerShapeLayer)
-            fromEnlargedState = true
-        }
+//                addLayer(shapeLayer: animShapeLayer)
+//                addLayer(shapeLayer: innerAnimShapeLayer)
+//
+//                fromEnlargedState = false
+//            } else {
+////                 Animate Outer Semicircle
+//                let smallDiscAnimGroup = getAnimationGroup(withLowerLimit: Int(smallDiscPath().inner.radius), upperLimit: Int(smallDiscPath().outer.radius))
+//
+//                // Add animationGroup to Outer semicircle Layer
+//                smallDiscOuterShapeLayer.add(smallDiscAnimGroup, forKey: nil)
+//
+//                // First paint the Outer semicircle, followed by inner semicircle
+////                addLayer(shapeLayer: smallDiscOuterShapeLayer)
+////                addLayer(shapeLayer: smallDiscInnerShapeLayer)
+//                layer.addSublayer(shapeLayer)
+//            }
+//        } else {
+//            layer.sublayers = nil
+//
+//            // Outer Semicirle
+//            let enlargedDiscOuterShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
+//
+//            // Animate Outer Semicircle
+//            let enlargedOuterAnimationGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().outer.radius))
+//            // Add Animation Object to Outer Semicircle
+//            enlargedDiscOuterShapeLayer.add(enlargedOuterAnimationGroup, forKey: nil)
+//
+//            // Inner SemiCircle
+//            let enlargedDiscInnerShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().inner.path, fillColor: .white)
+//            // Animate Inner Semicircle
+//            let enlargedInnerAnimationsGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().inner.radius))
+//            // Add Animation Group to shapeLayer
+//            enlargedDiscInnerShapeLayer.add(enlargedInnerAnimationsGroup, forKey: nil)
+//
+//            // First paint the Outer semicircle, followed by inner semicircle
+//            addLayer(shapeLayer: enlargedDiscOuterShapeLayer)
+//            addLayer(shapeLayer: enlargedDiscInnerShapeLayer)
+//            fromEnlargedState = true
+//        }
     }
     
     func smallDiscPath() -> (inner: (path: UIBezierPath, radius: CGFloat), outer: (path: UIBezierPath, radius: CGFloat)) {

@@ -23,14 +23,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
     var discView: DiscView = {
         // Setting Frame
         let width = UIScreen.main.bounds.width + 60
+        print(width)
         let frame = CGRect(x: 0, y: 0, width: width, height: width)
         let discView = DiscView(frame: frame)
         discView.clipsToBounds = false
         discView.translatesAutoresizingMaskIntoConstraints = false
         discView.backgroundColor = .clear
-        discView.layer.cornerRadius = frame.width / 2
-        discView.layer.masksToBounds = true
+        print("FrameWidth/2 is \(frame.width / 2)")
+//        discView.layer.cornerRadius = frame.width / 2
+//        discView.layer.masksToBounds = true
         return discView
+    }()
+    
+    
+    let width = UIScreen.main.bounds.width + 120
+    
+    lazy var volumeView: CircularSlider = {
+        
+        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.width)
+        let volumeView = CircularSlider(frame: frame)
+        volumeView.translatesAutoresizingMaskIntoConstraints = false
+        volumeView.backgroundColor = .clear
+        volumeView.isUserInteractionEnabled = true
+        return volumeView
     }()
     
     lazy var backButton: UIButton = {
@@ -61,18 +76,25 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
     
     func createDiscView() {
         self.view.addSubview(discView)
-//        self.discView.delegate = self
+        view.addSubview(volumeView)
+        self.discView.delegate = self
         discView.centerXAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         discView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         discView.heightAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
         discView.widthAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
-        
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(enlargeDiscView))
         tapGesture.numberOfTapsRequired = 1
         tapGesture.delegate = self
         tapGesture.cancelsTouchesInView = false
         discView.isUserInteractionEnabled = true
         discView.addGestureRecognizer(tapGesture)
+        
+        
+        volumeView.centerXAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        volumeView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -20).isActive = true
+        volumeView.heightAnchor.constraint(equalToConstant: width).isActive = true
+        volumeView.widthAnchor.constraint(equalToConstant: width - 20).isActive = true
     }
     
     @objc func enlargeDiscView() {

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CC32FC2204E8796009E0180 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC32FBF204E8795009E0180 /* Utils.swift */; };
+		3CC32FC3204E8796009E0180 /* RotationGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC32FC0204E8795009E0180 /* RotationGesture.swift */; };
+		3CC32FC4204E8796009E0180 /* CircularSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC32FC1204E8796009E0180 /* CircularSlider.swift */; };
+		3CC32FC6204E8907009E0180 /* CircularSlider.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CC32FC5204E8907009E0180 /* CircularSlider.xib */; };
 		3CEC356C203D3F5300885146 /* DiscView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEC356B203D3F5300885146 /* DiscView.swift */; };
 		3CED4C2A204026BB00F7BCDB /* CircularCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */; };
 		ADDCC7F0202CCB5000C3BFAC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */; };
@@ -30,6 +34,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3CC32FBF204E8795009E0180 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		3CC32FC0204E8795009E0180 /* RotationGesture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RotationGesture.swift; sourceTree = "<group>"; };
+		3CC32FC1204E8796009E0180 /* CircularSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularSlider.swift; sourceTree = "<group>"; };
+		3CC32FC5204E8907009E0180 /* CircularSlider.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CircularSlider.xib; sourceTree = "<group>"; };
 		3CEC356B203D3F5300885146 /* DiscView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscView.swift; sourceTree = "<group>"; };
 		3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularCollectionViewLayout.swift; sourceTree = "<group>"; };
 		ADDCC7EC202CCB5000C3BFAC /* PartyTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PartyTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +93,10 @@
 		ADDCC7EE202CCB5000C3BFAC /* PartyTime */ = {
 			isa = PBXGroup;
 			children = (
+				3CC32FC1204E8796009E0180 /* CircularSlider.swift */,
+				3CC32FC0204E8795009E0180 /* RotationGesture.swift */,
+				3CC32FC5204E8907009E0180 /* CircularSlider.xib */,
+				3CC32FBF204E8795009E0180 /* Utils.swift */,
 				ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */,
 				ADDCC7F1202CCB5000C3BFAC /* ViewController.swift */,
 				3CEC356B203D3F5300885146 /* DiscView.swift */,
@@ -194,6 +206,7 @@
 				ADDCC7FD202CCB5000C3BFAC /* LaunchScreen.storyboard in Resources */,
 				ADDCC7FA202CCB5000C3BFAC /* Assets.xcassets in Resources */,
 				ADDCC7F5202CCB5000C3BFAC /* Main.storyboard in Resources */,
+				3CC32FC6204E8907009E0180 /* CircularSlider.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,9 +227,12 @@
 				ADDCC813202CCBBB00C3BFAC /* Utility.swift in Sources */,
 				ADDCC7F8202CCB5000C3BFAC /* PartyTime.xcdatamodeld in Sources */,
 				ADDCC7F2202CCB5000C3BFAC /* ViewController.swift in Sources */,
+				3CC32FC2204E8796009E0180 /* Utils.swift in Sources */,
 				3CED4C2A204026BB00F7BCDB /* CircularCollectionViewLayout.swift in Sources */,
+				3CC32FC4204E8796009E0180 /* CircularSlider.swift in Sources */,
 				ADDCC7F0202CCB5000C3BFAC /* AppDelegate.swift in Sources */,
 				3CEC356C203D3F5300885146 /* DiscView.swift in Sources */,
+				3CC32FC3204E8796009E0180 /* RotationGesture.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
