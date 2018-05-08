@@ -25,19 +25,11 @@ class IndicatorView: UIView {
         return maximumValue - minimumValue
     }
     
-    var centerOfArc: CGPoint {
-        get {
-            return CGPoint(x: frame.width / 2, y: frame.height )
-        }
-    }
+    lazy var centerOfArc: CGPoint = CGPoint(x: self.frame.width / 2, y: self.frame.height )
     
-    var startAngle: CGFloat {
-        return -CGFloat(Double.pi / 2)
-    }
+    var startAngle: CGFloat = -CGFloat(Double.pi / 2.2)//-CGFloat(Double.pi / 2)
     
-    var endAngle: CGFloat {
-        return  0
-    }
+    var endAngle: CGFloat = -CGFloat(Double.pi / 20)//0
     
     var angleRange: CGFloat {
         return CGFloat(Double.pi/2)
@@ -108,14 +100,14 @@ class IndicatorView: UIView {
         backgroundCircleLayer.frame = bounds
         backgroundCircleLayer.lineWidth = 5.0
         backgroundCircleLayer.fillColor = UIColor.clear.cgColor
-        backgroundCircleLayer.strokeColor = UIColor.darkGray.cgColor
+        backgroundCircleLayer.strokeColor = UIColor.white.cgColor
         backgroundCircleLayer.lineCap = kCALineCapRound
         self.layer.addSublayer(backgroundCircleLayer)
         
         progressCircleLayer.frame = bounds
         progressCircleLayer.lineWidth = 5.0
         progressCircleLayer.fillColor = UIColor.clear.cgColor
-        progressCircleLayer.strokeColor = UIColor.white.cgColor
+        progressCircleLayer.strokeColor = UIColor.green.cgColor
         progressCircleLayer.strokeEnd = 0
         progressCircleLayer.lineCap = kCALineCapRound
         self.layer.addSublayer(progressCircleLayer)

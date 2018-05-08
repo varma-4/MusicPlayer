@@ -64,6 +64,7 @@ open class RotationGestureRecognizer: UIPanGestureRecognizer {
     }
     
     fileprivate func isInsideRing(_ touches: Set<NSObject>) -> Bool{
+        return true
         guard let touch = touches[touches.startIndex] as? UITouch else { return false }
         let location = touch.location(in: view)
         

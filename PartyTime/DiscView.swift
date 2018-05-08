@@ -177,7 +177,10 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     
     func initialiseCollectionView() {
         let layout = CircularCollectionViewLayout()
-        let myCollectionView = ItemsCollectionView(frame: bounds, collectionViewLayout: layout)
+        let width = UIScreen.main.bounds.width + 60
+        let frameBounds = CGRect(x: 0, y: 0, width: width, height: width)
+        
+        let myCollectionView = ItemsCollectionView(frame: frameBounds, collectionViewLayout: layout)
         myCollectionView.translatesAutoresizingMaskIntoConstraints = false
         myCollectionView.backgroundColor = .clear
         myCollectionView.dataSource = self
@@ -189,12 +192,16 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         
         myCollectionView.register(CircularColectionViewCell.self, forCellWithReuseIdentifier: "myCell")
         addSubview(myCollectionView)
-        myCollectionView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
-        myCollectionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        myCollectionView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        myCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+//        myCollectionView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+//        myCollectionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+//        myCollectionView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+//        myCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        myCollectionView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        myCollectionView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        myCollectionView.heightAnchor.constraint(equalToConstant: width).isActive = true
+        myCollectionView.widthAnchor.constraint(equalToConstant: width).isActive = true
         songsCollectionView = myCollectionView
-        
+//        songsCollectionView?.backgroundColor = .red
 //        myCollectionView.backgroundColor = .lightGray
     }
     
@@ -238,21 +245,17 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     
     override func draw(_ rect: CGRect) {
         let radi = CGFloat(135)
-        let circlePath = UIBezierPath(arcCenter: centerOfDisc, radius: radi, startAngle: -CGFloat(Double.pi / 2), endAngle: CGFloat(Double.pi / 2), clockwise: true)
+        let circlePath = UIBezierPath(arcCenter: centerOfDisc, radius: radi, startAngle: 0, endAngle: CGFloat(2 * Double.pi), clockwise: true)
         
         let shapeLayer = CAShapeLayer()
         shapeLayerCircle = shapeLayer
         
         shapeLayer.path = circlePath.cgPath
-        //change the fill color
         shapeLayer.fillColor = UIColor.clear.cgColor
-        //you can change the stroke color
         shapeLayer.strokeColor = UIColor.partyTimeBlue().cgColor
-        //you can change the line width
-        print(smallDiscPath().outer.radius - radi)
-        print(frame.height)
         shapeLayer.lineWidth = 165
         shapeLayer.opacity = 0.8
+        
         layer.addSublayer(shapeLayer)
     }
     
@@ -519,70 +522,5 @@ extension UIScrollView {
     func scrollToBottomm(animated: Bool) {
         setContentOffset(CGPoint(x: 0, y: CGFloat.greatestFiniteMagnitude),
                          animated: animated)
-    }
-}
-
-extension CGPath {
-    
-    func forEach( body: @convention(block) (CGPathElement) -> Void) {
-        typealias Body = @convention(block) (CGPathElement) -> Void
-        let callback: @convention(c) (UnsafeMutableRawPointer, UnsafePointer<CGPathElement>) -> Void = { (info, element) in
-            let body = unsafeBitCast(info, to: Body.self)
-            body(element.pointee)
-        }
-        print(MemoryLayout.size(ofValue: body))
-        let unsafeBody = unsafeBitCast(body, to: UnsafeMutableRawPointer.self)
-        self.apply(info: unsafeBody, function: unsafeBitCast(callback, to: CGPathApplierFunction.self))
-    }
-    
-    
-    func getPathElementsPoints() -> [CGPoint] {
-        var arrayPoints : [CGPoint]! = [CGPoint]()
-        self.forEach { element in
-            switch (element.type) {
-            case CGPathElementType.moveToPoint:
-                arrayPoints.append(element.points[0])
-            case .addLineToPoint:
-                arrayPoints.append(element.points[0])
-            case .addQuadCurveToPoint:
-                arrayPoints.append(element.points[0])
-                arrayPoints.append(element.points[1])
-            case .addCurveToPoint:
-                arrayPoints.append(element.points[0])
-                arrayPoints.append(element.points[1])
-                arrayPoints.append(element.points[2])
-            default: break
-            }
-        }
-        return arrayPoints
-    }
-    
-    func getPathElementsPointsAndTypes() -> ([CGPoint],[CGPathElementType]) {
-        var arrayPoints : [CGPoint]! = [CGPoint]()
-        var arrayTypes : [CGPathElementType]! = [CGPathElementType]()
-        self.forEach { element in
-            switch (element.type) {
-            case CGPathElementType.moveToPoint:
-                arrayPoints.append(element.points[0])
-                arrayTypes.append(element.type)
-            case .addLineToPoint:
-                arrayPoints.append(element.points[0])
-                arrayTypes.append(element.type)
-            case .addQuadCurveToPoint:
-                arrayPoints.append(element.points[0])
-                arrayPoints.append(element.points[1])
-                arrayTypes.append(element.type)
-                arrayTypes.append(element.type)
-            case .addCurveToPoint:
-                arrayPoints.append(element.points[0])
-                arrayPoints.append(element.points[1])
-                arrayPoints.append(element.points[2])
-                arrayTypes.append(element.type)
-                arrayTypes.append(element.type)
-                arrayTypes.append(element.type)
-            default: break
-            }
-        }
-        return (arrayPoints,arrayTypes)
     }
 }

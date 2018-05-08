@@ -20,6 +20,9 @@
 		ADDCC7FD202CCB5000C3BFAC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADDCC7FB202CCB5000C3BFAC /* LaunchScreen.storyboard */; };
 		ADDCC808202CCB5000C3BFAC /* PartyTimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDCC807202CCB5000C3BFAC /* PartyTimeTests.swift */; };
 		ADDCC813202CCBBB00C3BFAC /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDCC812202CCBBB00C3BFAC /* Utility.swift */; };
+		ADF80D1F20A1FD7500C9DE50 /* IndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF80D1D20A1FD7500C9DE50 /* IndicatorView.swift */; };
+		ADF80D2020A1FD7500C9DE50 /* VolumeIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF80D1E20A1FD7500C9DE50 /* VolumeIndicatorView.swift */; };
+		ADF80D2220A2154D00C9DE50 /* ProgressIndiactorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF80D2120A2154D00C9DE50 /* ProgressIndiactorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +53,9 @@
 		ADDCC807202CCB5000C3BFAC /* PartyTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyTimeTests.swift; sourceTree = "<group>"; };
 		ADDCC809202CCB5000C3BFAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADDCC812202CCBBB00C3BFAC /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		ADF80D1D20A1FD7500C9DE50 /* IndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
+		ADF80D1E20A1FD7500C9DE50 /* VolumeIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumeIndicatorView.swift; sourceTree = "<group>"; };
+		ADF80D2120A2154D00C9DE50 /* ProgressIndiactorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressIndiactorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +97,9 @@
 		ADDCC7EE202CCB5000C3BFAC /* PartyTime */ = {
 			isa = PBXGroup;
 			children = (
+				ADF80D1D20A1FD7500C9DE50 /* IndicatorView.swift */,
+				ADF80D1E20A1FD7500C9DE50 /* VolumeIndicatorView.swift */,
+				ADF80D2120A2154D00C9DE50 /* ProgressIndiactorView.swift */,
 				3CC32FC1204E8796009E0180 /* CircularSlider.swift */,
 				3CC32FC0204E8795009E0180 /* RotationGesture.swift */,
 				3CC32FBF204E8795009E0180 /* Utils.swift */,
@@ -224,11 +233,14 @@
 				ADDCC7F8202CCB5000C3BFAC /* PartyTime.xcdatamodeld in Sources */,
 				ADDCC7F2202CCB5000C3BFAC /* ViewController.swift in Sources */,
 				3CC32FC2204E8796009E0180 /* Utils.swift in Sources */,
+				ADF80D1F20A1FD7500C9DE50 /* IndicatorView.swift in Sources */,
 				3CED4C2A204026BB00F7BCDB /* CircularCollectionViewLayout.swift in Sources */,
+				ADF80D2020A1FD7500C9DE50 /* VolumeIndicatorView.swift in Sources */,
 				3CC32FC4204E8796009E0180 /* CircularSlider.swift in Sources */,
 				ADDCC7F0202CCB5000C3BFAC /* AppDelegate.swift in Sources */,
 				3CEC356C203D3F5300885146 /* DiscView.swift in Sources */,
 				3CC32FC3204E8796009E0180 /* RotationGesture.swift in Sources */,
+				ADF80D2220A2154D00C9DE50 /* ProgressIndiactorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

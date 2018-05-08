@@ -24,45 +24,23 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
         albumImageView.image = image
     }
     
-    var discView: DiscView = {
+    let width = UIScreen.main.bounds.width
+    
+    lazy var discView: DiscView = {
         // Setting Frame
-        let width = UIScreen.main.bounds.width + 60
-        print(width)
-        let frame = CGRect(x: 0, y: 0, width: width, height: width)
+        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.width)
         let discView = DiscView(frame: frame)
         discView.clipsToBounds = false
         discView.translatesAutoresizingMaskIntoConstraints = false
         discView.backgroundColor = .clear
         print("FrameWidth/2 is \(frame.width / 2)")
-        discView.layer.cornerRadius = frame.width / 2
-        discView.clipsToBounds = true
+//        discView.layer.cornerRadius = frame.width / 2
+//        discView.clipsToBounds = true
         return discView
     }()
     
-    
-    let width = UIScreen.main.bounds.width + 120
-    
-    lazy var volumeView: CircularSlider = {
-        let frame = CGRect(x: 0, y: 0, width: self.width/2, height: self.width/2)
-        let volumeView = CircularSlider(frame: frame)
-        volumeView.translatesAutoresizingMaskIntoConstraints = false
-        volumeView.backgroundColor = .orange
-        volumeView.isUserInteractionEnabled = true
-        volumeView.startAngle = -CGFloat(Double.pi / 2)
-        volumeView.endAngle = CGFloat(Double.pi / 20)
-        return volumeView
-    }()
-    
-    lazy var songProgressView: CircularSlider = {
-        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.width)
-        let songProgressView = CircularSlider(frame: frame)
-        songProgressView.translatesAutoresizingMaskIntoConstraints = false
-        songProgressView.backgroundColor = .clear
-        songProgressView.isUserInteractionEnabled = true
-        songProgressView.startAngle = CGFloat(Double.pi / 20)
-        songProgressView.endAngle = CGFloat(Double.pi / 2)
-        return songProgressView
-    }()
+    var volumeIndicatorView: VolumeIndicatorView?
+    var progressIndicatorView: ProgressIndicatorView?
     
     lazy var backButton: UIButton = {
         let button = UIButton()
@@ -88,19 +66,38 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
     override func loadView() {
         super.loadView()
         createDiscView()
+        addIndicatorViews()
+    }
+    
+    fileprivate func addIndicatorViews() {
+        volumeIndicatorView = VolumeIndicatorView(frame: CGRect(x: 0, y: 0, width: 500
+            , height: 300))
+        guard let volumeIndicatorView = volumeIndicatorView else { return }
+        volumeIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.insertSubview(volumeIndicatorView, belowSubview: discView)
+        volumeIndicatorView.centerXAnchor.constraint(equalTo: self.discView.centerXAnchor).isActive = true
+        volumeIndicatorView.bottomAnchor.constraint(equalTo: self.discView.centerYAnchor).isActive = true
+        volumeIndicatorView.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        volumeIndicatorView.widthAnchor.constraint(equalToConstant: 500).isActive = true
+        
+        progressIndicatorView = ProgressIndicatorView(frame: CGRect(x: 0, y: 0, width: 500
+            , height: 300))
+        guard let progressIndicatorView = progressIndicatorView else { return }
+        progressIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.insertSubview(progressIndicatorView, belowSubview: discView)
+        progressIndicatorView.centerXAnchor.constraint(equalTo: self.discView.centerXAnchor).isActive = true
+        progressIndicatorView.topAnchor.constraint(equalTo: self.discView.centerYAnchor).isActive = true
+        progressIndicatorView.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        progressIndicatorView.widthAnchor.constraint(equalToConstant: 500).isActive = true
     }
     
     func createDiscView() {
-//        view.addSubview(songProgressView)
-        view.addSubview(volumeView)
         self.view.addSubview(discView)
         self.discView.delegate = self
-        self.discView.volumeViewShapeLayer = volumeView.progressCircleLayer
-        self.discView.volumeView = volumeView
         discView.centerXAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         discView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        discView.heightAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
-        discView.widthAnchor.constraint(equalToConstant: (UIScreen.main.bounds.width + 60)).isActive = true
+        discView.heightAnchor.constraint(equalToConstant: width).isActive = true
+        discView.widthAnchor.constraint(equalToConstant: width).isActive = true
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(enlargeDiscView))
         tapGesture.numberOfTapsRequired = 1
@@ -108,17 +105,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
         tapGesture.cancelsTouchesInView = false
         discView.isUserInteractionEnabled = true
         discView.addGestureRecognizer(tapGesture)
-        
-        volumeView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
-        volumeView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0).isActive = true
-        volumeView.heightAnchor.constraint(equalToConstant: width/2).isActive = true
-        volumeView.widthAnchor.constraint(equalToConstant: width/2).isActive = true
-        volumeView.boundsToBeUsed = discView.bounds
-        
-//        songProgressView.centerXAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
-//        songProgressView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 20).isActive = true
-//        songProgressView.heightAnchor.constraint(equalToConstant: width + 20).isActive = true
-//        songProgressView.widthAnchor.constraint(equalToConstant: width - 20).isActive = true
     }
     
     @objc func enlargeDiscView() {
@@ -151,6 +137,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
     }
     
     func addButtonToSuperView() {
+        progressIndicatorView?.isHidden = true
+        volumeIndicatorView?.isHidden = true
         
         UIView.animate(withDuration:0.8, animations: {
             self.view.layoutIfNeeded()
@@ -165,10 +153,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
     }
     
     func removeButtonfromSuperView() {
+        
         barButtonRightAnchorConstraint?.constant = 50
         UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             self.view.layoutIfNeeded()
-        }, completion: nil)
+                }, completion: nil)
+        self.progressIndicatorView?.isHidden = false
+        self.volumeIndicatorView?.isHidden = false
     }
 
 
