@@ -17,15 +17,8 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     
     let width = UIScreen.main.bounds.width + 120
     
-    lazy var volumeView: CircularSlider = {
-        
-        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.width)
-        let volumeView = CircularSlider(frame: frame)
-        volumeView.translatesAutoresizingMaskIntoConstraints = false
-        volumeView.backgroundColor = .clear
-        volumeView.isUserInteractionEnabled = true
-        return volumeView
-    }()
+    var volumeViewShapeLayer: CAShapeLayer?
+    var volumeView: CircularSlider?
     
     var delegate: changeImageViewProtocol? {
         didSet {
@@ -105,7 +98,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         print("Albums Count: \(albums.count)\n\n\n")
         
         for eachAlbum in albums {
-            if eachAlbum.items.count != 2 {
+            if eachAlbum.items.count != 10 {
                 continue
             }
             for eachSong in eachAlbum.items {
@@ -139,7 +132,6 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         //you can change the line width
         highlightedShapeLayer.lineWidth = 200
         highlightedShapeLayer.opacity = 0.3
-//        cell.layer.addSublayer(highlightedShapeLayer)
         layer.addSublayer(highlightedShapeLayer)
     }
     
@@ -236,23 +228,20 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         } else {
             getAlbums()
         }
-//        addSubview(volumeView)
-//        volumeView.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 20).isActive = true
-//        volumeView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -20).isActive = true
-//        volumeView.heightAnchor.constraint(equalToConstant: width).isActive = true
-//        volumeView.widthAnchor.constraint(equalToConstant: width - 20).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
+    var shapeLayerCircle: CAShapeLayer = CAShapeLayer()
+    
     override func draw(_ rect: CGRect) {
         let radi = CGFloat(135)
         let circlePath = UIBezierPath(arcCenter: centerOfDisc, radius: radi, startAngle: -CGFloat(Double.pi / 2), endAngle: CGFloat(Double.pi / 2), clockwise: true)
         
         let shapeLayer = CAShapeLayer()
-        
+        shapeLayerCircle = shapeLayer
         
         shapeLayer.path = circlePath.cgPath
         //change the fill color
@@ -265,87 +254,6 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         shapeLayer.lineWidth = 165
         shapeLayer.opacity = 0.8
         layer.addSublayer(shapeLayer)
-//        if smallDiscModeOn {
-//
-//
-//            // Small Disc Outer semicircle
-//            let smallDiscOuterShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-//
-//            // Small Disc Inner Semicircle
-//            let smallDiscInnerShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: .white)
-        
-            //        cell.layer.addSublayer(highlightedShapeLayer)
-            
-        
-            
-//            if fromEnlargedState {
-//
-//                let outerRangeCount = Int(enlargedDiscPath().outer.radius - smallDiscPath().outer.radius)
-//                let innerRangeCount = Int(enlargedDiscPath().inner.radius - smallDiscPath().inner.radius + 20)
-//                print(innerRangeCount)
-//                // Get AnimationsGroup for enlargedDisc outer SemiCircle
-//                let outerAnimsGroup = makeAnimationsGroupForEnlargedToSmall(withRange: outerRangeCount, intialRadius: enlargedDiscPath().outer.radius)
-//
-//                // Get path for smallDisc Outer path
-//                let animShapeLayer = getCAShapeLayer(forPath: smallDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-//                // Animate Enlarged to Small Disc
-//                let animationGroupEnlargeToSmall = getAnimationGroup(withLowerLimit: 0, upperLimit: 0, animsGroup: outerAnimsGroup)
-//
-//                // Add animationGroup to Outer Semicircle
-//                animShapeLayer.add(animationGroupEnlargeToSmall, forKey: nil)
-//
-//                // Get AnimationsGroup for enlargedDisc inner semicircle
-//                let innerAnimsGroup = makeAnimationsGroupForEnlargedToSmall(withRange: innerRangeCount, intialRadius: enlargedDiscPath().inner.radius + 20)
-//
-//                // Get path for smallDisc Inner path
-//                let innerAnimShapeLayer = getCAShapeLayer(forPath: smallDiscPath().inner.path, fillColor: UIColor.white)
-//                // Animate Enlarged to Small Disc Inner
-//                let animationGroupEnlargeToSmallInner = getAnimationGroup(withLowerLimit: 0, upperLimit: 0, animsGroup: innerAnimsGroup)
-//
-//                // Add animationGroup to Inner Semicircle
-//                innerAnimShapeLayer.add(animationGroupEnlargeToSmallInner, forKey: nil)
-//
-//                // Paint all the shapeLayers
-//                addLayer(shapeLayer: smallDiscOuterShapeLayer)
-//                addLayer(shapeLayer: animShapeLayer)
-//                addLayer(shapeLayer: innerAnimShapeLayer)
-//
-//                fromEnlargedState = false
-//            } else {
-////                 Animate Outer Semicircle
-//                let smallDiscAnimGroup = getAnimationGroup(withLowerLimit: Int(smallDiscPath().inner.radius), upperLimit: Int(smallDiscPath().outer.radius))
-//
-//                // Add animationGroup to Outer semicircle Layer
-//                smallDiscOuterShapeLayer.add(smallDiscAnimGroup, forKey: nil)
-//
-//                // First paint the Outer semicircle, followed by inner semicircle
-////                addLayer(shapeLayer: smallDiscOuterShapeLayer)
-////                addLayer(shapeLayer: smallDiscInnerShapeLayer)
-//                layer.addSublayer(shapeLayer)
-//            }
-//        } else {
-//            layer.sublayers = nil
-//
-//            // Outer Semicirle
-//            let enlargedDiscOuterShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().outer.path, fillColor: UIColor.partyTimeBlue())
-//
-//            // Animate Outer Semicircle
-//            let enlargedOuterAnimationGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().outer.radius))
-//            // Add Animation Object to Outer Semicircle
-//            enlargedDiscOuterShapeLayer.add(enlargedOuterAnimationGroup, forKey: nil)
-//
-//            // Inner SemiCircle
-//            let enlargedDiscInnerShapeLayer = getCAShapeLayer(forPath: enlargedDiscPath().inner.path, fillColor: .white)
-//            // Animate Inner Semicircle
-//            let enlargedInnerAnimationsGroup = getAnimationGroup(withLowerLimit: 0, upperLimit: Int(enlargedDiscPath().inner.radius))
-//            // Add Animation Group to shapeLayer
-//            enlargedDiscInnerShapeLayer.add(enlargedInnerAnimationsGroup, forKey: nil)
-//
-//            // First paint the Outer semicircle, followed by inner semicircle
-//            addLayer(shapeLayer: enlargedDiscOuterShapeLayer)
-//            addLayer(shapeLayer: enlargedDiscInnerShapeLayer)
-//            fromEnlargedState = true
-//        }
     }
     
     func smallDiscPath() -> (inner: (path: UIBezierPath, radius: CGFloat), outer: (path: UIBezierPath, radius: CGFloat)) {
@@ -611,5 +519,70 @@ extension UIScrollView {
     func scrollToBottomm(animated: Bool) {
         setContentOffset(CGPoint(x: 0, y: CGFloat.greatestFiniteMagnitude),
                          animated: animated)
+    }
+}
+
+extension CGPath {
+    
+    func forEach( body: @convention(block) (CGPathElement) -> Void) {
+        typealias Body = @convention(block) (CGPathElement) -> Void
+        let callback: @convention(c) (UnsafeMutableRawPointer, UnsafePointer<CGPathElement>) -> Void = { (info, element) in
+            let body = unsafeBitCast(info, to: Body.self)
+            body(element.pointee)
+        }
+        print(MemoryLayout.size(ofValue: body))
+        let unsafeBody = unsafeBitCast(body, to: UnsafeMutableRawPointer.self)
+        self.apply(info: unsafeBody, function: unsafeBitCast(callback, to: CGPathApplierFunction.self))
+    }
+    
+    
+    func getPathElementsPoints() -> [CGPoint] {
+        var arrayPoints : [CGPoint]! = [CGPoint]()
+        self.forEach { element in
+            switch (element.type) {
+            case CGPathElementType.moveToPoint:
+                arrayPoints.append(element.points[0])
+            case .addLineToPoint:
+                arrayPoints.append(element.points[0])
+            case .addQuadCurveToPoint:
+                arrayPoints.append(element.points[0])
+                arrayPoints.append(element.points[1])
+            case .addCurveToPoint:
+                arrayPoints.append(element.points[0])
+                arrayPoints.append(element.points[1])
+                arrayPoints.append(element.points[2])
+            default: break
+            }
+        }
+        return arrayPoints
+    }
+    
+    func getPathElementsPointsAndTypes() -> ([CGPoint],[CGPathElementType]) {
+        var arrayPoints : [CGPoint]! = [CGPoint]()
+        var arrayTypes : [CGPathElementType]! = [CGPathElementType]()
+        self.forEach { element in
+            switch (element.type) {
+            case CGPathElementType.moveToPoint:
+                arrayPoints.append(element.points[0])
+                arrayTypes.append(element.type)
+            case .addLineToPoint:
+                arrayPoints.append(element.points[0])
+                arrayTypes.append(element.type)
+            case .addQuadCurveToPoint:
+                arrayPoints.append(element.points[0])
+                arrayPoints.append(element.points[1])
+                arrayTypes.append(element.type)
+                arrayTypes.append(element.type)
+            case .addCurveToPoint:
+                arrayPoints.append(element.points[0])
+                arrayPoints.append(element.points[1])
+                arrayPoints.append(element.points[2])
+                arrayTypes.append(element.type)
+                arrayTypes.append(element.type)
+                arrayTypes.append(element.type)
+            default: break
+            }
+        }
+        return (arrayPoints,arrayTypes)
     }
 }

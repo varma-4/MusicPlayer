@@ -12,100 +12,70 @@ import UIKit
 
 @objc public protocol CircularSliderDelegate: NSObjectProtocol {
     @objc optional func circularSlider(_ circularSlider: CircularSlider, valueForValue value: Float) -> Float
-    @objc optional func circularSlider(_ circularSlider: CircularSlider, didBeginEditing textfield: UITextField)
-    @objc optional func circularSlider(_ circularSlider: CircularSlider, didEndEditing textfield: UITextField)
-    //  optional func circularSlider(circularSlider: CircularSlider, attributeTextForValue value: Float) -> NSAttributedString
 }
 
 
 @IBDesignable
 open class CircularSlider: UIView {
     
-    // MARK: - outlets
-    @IBOutlet fileprivate weak var iconImageView: UIImageView!
-    @IBOutlet fileprivate weak var iconCenterY: NSLayoutConstraint!
-    @IBOutlet fileprivate weak var centeredView: UIView!
-    @IBOutlet fileprivate weak var titleLabel: UILabel!
-    @IBOutlet fileprivate weak var textfield: UITextField! {
-        didSet {
-            addDoneButtonOnKeyboard()
-        }
-    }
-    @IBOutlet fileprivate weak var divisaLabel: UILabel!
-    
-    
     // MARK: - properties
     open weak var delegate: CircularSliderDelegate?
     
-    fileprivate var containerView: UIView!
-    fileprivate var nibName = "CircularSlider"
     fileprivate var backgroundCircleLayer = CAShapeLayer()
-    fileprivate var progressCircleLayer = CAShapeLayer()
+    var progressCircleLayer = CAShapeLayer()
     fileprivate var knobLayer = CAShapeLayer()
     fileprivate var backingValue: Float = 0
     fileprivate var backingKnobAngle: CGFloat = 0
-    fileprivate var rotationGesture: RotationGestureRecognizer?
-    fileprivate var backingFractionDigits: NSInteger = 2
-    fileprivate let maxFractionDigits: NSInteger = 4
-    fileprivate var startAngle: CGFloat {
-        return -CGFloat(Double.pi / 2)
+    var rotationGesture: RotationGestureRecognizer?
+    open var boundsToBeUsed: CGRect = CGRect.zero {
+        didSet {
+            configure()
+        }
     }
-    fileprivate var endAngle: CGFloat {
-        return  -CGFloat(Double.pi / 20)
-    }
+
+    var startAngle: CGFloat = -CGFloat(Double.pi)//-CGFloat(Double.pi / 2)
+
+    var endAngle: CGFloat = 0//-CGFloat(Double.pi / 20)
+    
     fileprivate var angleRange: CGFloat {
         return endAngle - startAngle
     }
+    
     fileprivate var valueRange: Float {
         return maximumValue - minimumValue
     }
+    
     fileprivate var arcCenter: CGPoint {
-        return CGPoint(x: frame.width / 2, y: frame.height / 2)
+        return CGPoint(x: bounds.minX, y: bounds.maxY)
     }
-    fileprivate var arcRadius: CGFloat {
+    
+    var arcRadius: CGFloat {
         return min(frame.width,frame.height) / 2 - lineWidth / 2
     }
+    
     fileprivate var normalizedValue: Float {
         return (value - minimumValue) / (maximumValue - minimumValue)
     }
+    
     fileprivate var knobAngle: CGFloat {
         return CGFloat(normalizedValue) * angleRange + startAngle
     }
+    
     fileprivate var knobMidAngle: CGFloat {
-        return (2 * CGFloat(M_PI) + startAngle - endAngle) / 2 + endAngle
+        return (2 * CGFloat(Double.pi) + startAngle - endAngle) / 2 + endAngle
     }
+    
     fileprivate var knobRotationTransform: CATransform3D {
         return CATransform3DMakeRotation(knobAngle, 0.0, 0.0, 1)
     }
-    fileprivate var intFont = UIFont.systemFont(ofSize: 42)
-    fileprivate var decimalFont = UIFont.systemFont(ofSize: 42)
-    fileprivate var divisaFont = UIFont.systemFont(ofSize: 26)
-    
-    
-    @IBInspectable
-    open var title: String = "Title" {
-        didSet {
-//            titleLabel.text = title
-        }
-    }
+
     @IBInspectable
     open var radiansOffset: CGFloat = 0 {
         didSet {
             setNeedsDisplay()
         }
     }
-    @IBInspectable
-    open var icon: UIImage? = UIImage() {
-        didSet {
-            configureIcon()
-        }
-    }
-    @IBInspectable
-    open var divisa: String = "" {
-        didSet {
-            appearanceDivisa()
-        }
-    }
+
     @IBInspectable
     open var value: Float {
         get {
@@ -118,7 +88,7 @@ open class CircularSlider: UIView {
     @IBInspectable
     open var minimumValue: Float = 0
     @IBInspectable
-    open var maximumValue: Float = 500
+    open var maximumValue: Float = 100
     @IBInspectable
     open var lineWidth: CGFloat = 5 {
         didSet {
@@ -157,62 +127,25 @@ open class CircularSlider: UIView {
             appearanceKnobLayer()
         }
     }
-    @IBInspectable
-    open var hideLabels: Bool = false {
-        didSet {
-            setLabelsHidden(self.hideLabels)
-        }
-    }
-    @IBInspectable
-    open var fractionDigits: NSInteger {
-        get {
-            return backingFractionDigits
-        }
-        set {
-            backingFractionDigits = min(maxFractionDigits, max(0, newValue))
-        }
-    }
-    @IBInspectable
-    open var customDecimalSeparator: String? = nil {
-        didSet {
-            if let c = self.customDecimalSeparator, c.characters.count > 1 {
-                self.customDecimalSeparator = nil
-            }
-        }
-    }
-    
-    
+
     // MARK: - init
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        xibSetup()
-        configure()
+        print("Height: \(self.frame.height)")
+        print("Width: \(self.frame.width)")
+        print("Minx : \(self.frame.minX) \t MaxX: \(self.frame.maxX)")
+        print("MinY : \(self.frame.minY) \t MaxY: \(self.frame.maxY)")
+        print("Minx : \(self.frame.origin.x) \t MaxX: \(self.frame.origin.y)")
+//        configure()
     }
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        xibSetup()
-        configure()
+//        configure()
     }
-    
-    fileprivate func xibSetup() {
-        containerView = loadViewFromNib()
-        containerView.frame = bounds
-        containerView.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
-        addSubview(containerView)
-    }
-    
-    fileprivate func loadViewFromNib() -> UIView {
-        let bundle = Bundle(for: type(of: self))
-        let nib = UINib(nibName: nibName, bundle: bundle)
-        let view = nib.instantiate(withOwner: self, options: nil).first as! UIView
-        return view
-    }
-    
-    
+
     // MARK: - drawing methods
     override open func draw(_ rect: CGRect) {
-        print("drawRect")
         backgroundCircleLayer.bounds = bounds
         progressCircleLayer.bounds = bounds
         knobLayer.bounds = bounds
@@ -227,16 +160,15 @@ open class CircularSlider: UIView {
         progressCircleLayer.path = getCirclePath()
         knobLayer.path = getKnobPath()
         
-        appearanceIconImageView()
         setValue(value, animated: false)
     }
     
     
     fileprivate func getCirclePath() -> CGPath {
-        return UIBezierPath(arcCenter: arcCenter,
+        return UIBezierPath(arcCenter: CGPoint(x: self.frame.width, y: self.frame.height),
                             radius: arcRadius,
-                            startAngle: startAngle,
-                            endAngle: endAngle,
+                            startAngle: -CGFloat(Double.pi/2),
+                            endAngle: 0,
                             clockwise: true).cgPath
     }
     
@@ -254,12 +186,6 @@ open class CircularSlider: UIView {
         configureProgressLayer()
         configureKnobLayer()
         configureGesture()
-        configureFont()
-    }
-    
-    fileprivate func configureIcon() {
-        iconImageView.image = icon
-        appearanceIconImageView()
     }
     
     fileprivate func configureBackgroundLayer() {
@@ -269,7 +195,11 @@ open class CircularSlider: UIView {
     }
     
     fileprivate func configureProgressLayer() {
-        progressCircleLayer.frame = bounds
+        if boundsToBeUsed != CGRect.zero {
+            progressCircleLayer.frame = boundsToBeUsed
+        } else {
+            progressCircleLayer.frame = bounds
+        }
         progressCircleLayer.strokeEnd = 0
         layer.addSublayer(progressCircleLayer)
         appearanceProgressLayer()
@@ -287,19 +217,7 @@ open class CircularSlider: UIView {
         addGestureRecognizer(rotationGesture!)
     }
     
-    fileprivate func configureFont() {
-        if #available(iOS 8.2, *) {
-            intFont = UIFont.systemFont(ofSize: 42, weight: UIFont.Weight.regular)
-            decimalFont = UIFont.systemFont(ofSize: 42, weight: UIFont.Weight.thin)
-            divisaFont = UIFont.systemFont(ofSize: 26, weight: UIFont.Weight.thin)
-        }
-    }
-    
-    
     // MARK: - appearance
-    fileprivate func appearanceIconImageView() {
-        iconCenterY.constant = arcRadius
-    }
     
     fileprivate func appearanceBackgroundLayer() {
         backgroundCircleLayer.lineWidth = lineWidth
@@ -321,17 +239,10 @@ open class CircularSlider: UIView {
         knobLayer.strokeColor = UIColor.clear.cgColor
     }
     
-    fileprivate func appearanceDivisa() {
-        divisaLabel.text = divisa
-        divisaLabel.font = divisaFont
-    }
-    
     
     // MARK: - update
     open func setValue(_ value: Float, animated: Bool) {
         self.value = delegate?.circularSlider?(self, valueForValue: value) ?? value
-        
-        updateLabels()
         
         setStrokeEnd(animated: animated)
         setKnobRotation(animated: animated)
@@ -369,29 +280,9 @@ open class CircularSlider: UIView {
         
         backingKnobAngle = knobAngle
     }
-    
-    fileprivate func setLabelsHidden(_ isHidden: Bool) {
-        centeredView.isHidden = isHidden
-    }
-    
-    fileprivate func updateLabels() {
-        updateValueLabel()
-    }
-    
-    fileprivate func updateValueLabel() {
-//        textfield.attributedText = value.formatWithFractionDigits(fractionDigits, customDecimalSeparator: customDecimalSeparator).sliderAttributeString(intFont: intFont, decimalFont: decimalFont, customDecimalSeparator: customDecimalSeparator )
-    }
-
-//    open override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-//        print(progressCircleLayer.path)
-//           if (progressCircleLayer.path?.contains(point))! || (knobLayer.path?.contains(point))! || (backgroundCircleLayer.path?.contains(point))! {
-//            return true
-//        }
-//        return false
-//    }
 
     // MARK: - gesture handler
-    @objc fileprivate func handleRotationGesture(_ sender: AnyObject) {
+    @objc func handleRotationGesture(_ sender: AnyObject) {
         guard let gesture = sender as? RotationGestureRecognizer else { return }
         
         if gesture.state == UIGestureRecognizerState.began {
@@ -400,13 +291,13 @@ open class CircularSlider: UIView {
         
         var rotationAngle = gesture.rotation
         if rotationAngle > knobMidAngle {
-            rotationAngle -= 2 * CGFloat(M_PI)
-        } else if rotationAngle < (knobMidAngle - 2 * CGFloat(M_PI)) {
-            rotationAngle += 2 * CGFloat(M_PI)
+            rotationAngle -= 2 * CGFloat(Double.pi)
+        } else if rotationAngle < (knobMidAngle - 2 * CGFloat(Double.pi)) {
+            rotationAngle += 2 * CGFloat(Double.pi)
         }
         rotationAngle = min(endAngle, max(startAngle, rotationAngle))
         
-        guard abs(Double(rotationAngle - knobAngle)) < M_PI_2 else { return }
+        guard abs(Double(rotationAngle - knobAngle)) < Double.pi / 2 else { return }
         
         let valueForAngle = Float(rotationAngle - startAngle) / Float(angleRange) * valueRange + minimumValue
         setValue(valueForAngle, animated: false)
@@ -415,81 +306,5 @@ open class CircularSlider: UIView {
     func cancelAnimation() {
         progressCircleLayer.removeAllAnimations()
         knobLayer.removeAllAnimations()
-    }
-    
-    
-    // MARK:- methods
-    open override func becomeFirstResponder() -> Bool {
-        return textfield.becomeFirstResponder()
-    }
-    
-    open override func resignFirstResponder() -> Bool {
-        return textfield.resignFirstResponder()
-    }
-    
-    fileprivate func addDoneButtonOnKeyboard() {
-        let doneToolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
-        let doneButton: UIBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.done, target: self, action: #selector(resignFirstResponder))
-        
-        doneToolbar.barStyle = UIBarStyle.default
-        doneToolbar.items = [flexSpace, doneButton]
-        doneToolbar.sizeToFit()
-        
-        textfield.inputAccessoryView = doneToolbar
-    }
-}
-
-
-// MARK: - UITextFieldDelegate
-extension CircularSlider: UITextFieldDelegate {
-    
-    public func textFieldDidBeginEditing(_ textField: UITextField) {
-        delegate?.circularSlider?(self, didBeginEditing: textfield)
-    }
-    
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        delegate?.circularSlider?(self, didEndEditing: textfield)
-        layoutIfNeeded()
-        setValue(textfield.text!.toFloat(), animated: true)
-    }
-    
-    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
-        let newString = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-        
-        if newString.characters.count > 0 {
-            
-            let fmt = NumberFormatter()
-            let scanner: Scanner = Scanner(string:newString.replacingOccurrences(of: customDecimalSeparator ?? fmt.decimalSeparator, with: "."))
-            let isNumeric = scanner.scanDecimal(nil) && scanner.isAtEnd
-            
-            if isNumeric {
-                var decimalFound = false
-                var charactersAfterDecimal = 0
-                
-                
-                
-                for ch in newString.characters.reversed() {
-                    if ch == fmt.decimalSeparator.characters.first {
-                        decimalFound = true
-                        break
-                    }
-                    charactersAfterDecimal += 1
-                }
-                if decimalFound && charactersAfterDecimal > fractionDigits {
-                    return false
-                }
-                else {
-                    return true
-                }
-            }
-            else {
-                return false
-            }
-        }
-        else {
-            return true
-        }
     }
 }
