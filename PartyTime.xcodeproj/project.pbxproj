@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C6F8ACB20A2BA9B00061078 /* CircularColectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6F8ACA20A2BA9B00061078 /* CircularColectionViewCell.swift */; };
+		3C6F8ACD20A2BAD900061078 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6F8ACC20A2BAD900061078 /* Extensions.swift */; };
+		3C6F8ACF20A2BB4400061078 /* ItemsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6F8ACE20A2BB4400061078 /* ItemsCollectionView.swift */; };
 		3CC32FC2204E8796009E0180 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC32FBF204E8795009E0180 /* Utils.swift */; };
 		3CC32FC3204E8796009E0180 /* RotationGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC32FC0204E8795009E0180 /* RotationGesture.swift */; };
 		3CC32FC4204E8796009E0180 /* CircularSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC32FC1204E8796009E0180 /* CircularSlider.swift */; };
@@ -36,6 +39,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C6F8ACA20A2BA9B00061078 /* CircularColectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularColectionViewCell.swift; sourceTree = "<group>"; };
+		3C6F8ACC20A2BAD900061078 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3C6F8ACE20A2BB4400061078 /* ItemsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsCollectionView.swift; sourceTree = "<group>"; };
 		3CC32FBF204E8795009E0180 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		3CC32FC0204E8795009E0180 /* RotationGesture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RotationGesture.swift; sourceTree = "<group>"; };
 		3CC32FC1204E8796009E0180 /* CircularSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularSlider.swift; sourceTree = "<group>"; };
@@ -76,6 +82,54 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C6F8AD020A2BB8800061078 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				3C6F8ACC20A2BAD900061078 /* Extensions.swift */,
+				3CC32FBF204E8795009E0180 /* Utils.swift */,
+				ADDCC812202CCBBB00C3BFAC /* Utility.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		3C6F8AD120A2BBE500061078 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3CC32FC1204E8796009E0180 /* CircularSlider.swift */,
+				3C6F8ACE20A2BB4400061078 /* ItemsCollectionView.swift */,
+				3C6F8ACA20A2BA9B00061078 /* CircularColectionViewCell.swift */,
+				ADF80D1D20A1FD7500C9DE50 /* IndicatorView.swift */,
+				ADF80D1E20A1FD7500C9DE50 /* VolumeIndicatorView.swift */,
+				ADF80D2120A2154D00C9DE50 /* ProgressIndiactorView.swift */,
+				3CEC356B203D3F5300885146 /* DiscView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		3C6F8AD220A2BC5B00061078 /* Gestures */ = {
+			isa = PBXGroup;
+			children = (
+				3CC32FC0204E8795009E0180 /* RotationGesture.swift */,
+			);
+			path = Gestures;
+			sourceTree = "<group>";
+		};
+		3C6F8AD320A2BC7500061078 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */,
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		3C6F8AD420A2BC8000061078 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				ADDCC7F1202CCB5000C3BFAC /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		ADDCC7E3202CCB4F00C3BFAC = {
 			isa = PBXGroup;
 			children = (
@@ -97,17 +151,12 @@
 		ADDCC7EE202CCB5000C3BFAC /* PartyTime */ = {
 			isa = PBXGroup;
 			children = (
-				ADF80D1D20A1FD7500C9DE50 /* IndicatorView.swift */,
-				ADF80D1E20A1FD7500C9DE50 /* VolumeIndicatorView.swift */,
-				ADF80D2120A2154D00C9DE50 /* ProgressIndiactorView.swift */,
-				3CC32FC1204E8796009E0180 /* CircularSlider.swift */,
-				3CC32FC0204E8795009E0180 /* RotationGesture.swift */,
-				3CC32FBF204E8795009E0180 /* Utils.swift */,
 				ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */,
-				ADDCC7F1202CCB5000C3BFAC /* ViewController.swift */,
-				3CEC356B203D3F5300885146 /* DiscView.swift */,
-				3CED4C29204026BB00F7BCDB /* CircularCollectionViewLayout.swift */,
-				ADDCC812202CCBBB00C3BFAC /* Utility.swift */,
+				3C6F8AD120A2BBE500061078 /* Views */,
+				3C6F8AD220A2BC5B00061078 /* Gestures */,
+				3C6F8AD020A2BB8800061078 /* Utilities */,
+				3C6F8AD420A2BC8000061078 /* Controllers */,
+				3C6F8AD320A2BC7500061078 /* Layouts */,
 				ADDCC7F3202CCB5000C3BFAC /* Main.storyboard */,
 				ADDCC7F9202CCB5000C3BFAC /* Assets.xcassets */,
 				ADDCC7FB202CCB5000C3BFAC /* LaunchScreen.storyboard */,
@@ -230,17 +279,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADDCC813202CCBBB00C3BFAC /* Utility.swift in Sources */,
+				3C6F8ACB20A2BA9B00061078 /* CircularColectionViewCell.swift in Sources */,
 				ADDCC7F8202CCB5000C3BFAC /* PartyTime.xcdatamodeld in Sources */,
 				ADDCC7F2202CCB5000C3BFAC /* ViewController.swift in Sources */,
 				3CC32FC2204E8796009E0180 /* Utils.swift in Sources */,
 				ADF80D1F20A1FD7500C9DE50 /* IndicatorView.swift in Sources */,
 				3CED4C2A204026BB00F7BCDB /* CircularCollectionViewLayout.swift in Sources */,
+				3C6F8ACF20A2BB4400061078 /* ItemsCollectionView.swift in Sources */,
 				ADF80D2020A1FD7500C9DE50 /* VolumeIndicatorView.swift in Sources */,
 				3CC32FC4204E8796009E0180 /* CircularSlider.swift in Sources */,
 				ADDCC7F0202CCB5000C3BFAC /* AppDelegate.swift in Sources */,
 				3CEC356C203D3F5300885146 /* DiscView.swift in Sources */,
 				3CC32FC3204E8796009E0180 /* RotationGesture.swift in Sources */,
 				ADF80D2220A2154D00C9DE50 /* ProgressIndiactorView.swift in Sources */,
+				3C6F8ACD20A2BAD900061078 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
