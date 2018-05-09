@@ -33,7 +33,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, changeImage
         discView.clipsToBounds = false
         discView.translatesAutoresizingMaskIntoConstraints = false
         discView.backgroundColor = .clear
-        print("FrameWidth/2 is \(frame.width / 2)")
+//        print("FrameWidth/2 is \(frame.width / 2)")
 //        discView.layer.cornerRadius = frame.width / 2
 //        discView.clipsToBounds = true
         return discView

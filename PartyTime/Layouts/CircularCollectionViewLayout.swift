@@ -94,7 +94,7 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-         print("Height: \((collectionView?.bounds.height)! * 1.65)")
+//         print("Height: \((collectionView?.bounds.height)! * 1.65)")
         return CGSize(width: (collectionView?.bounds.width)!, height: (collectionView?.bounds.height)! * 1.65)
     }
 

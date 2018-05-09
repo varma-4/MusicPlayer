@@ -19,7 +19,7 @@ class IndicatorView: UIView {
     
     // MARK:- Constants
     open var minimumValue: Float = 0
-    open var maximumValue: Float = 100
+    open var maximumValue: Float = 200
     
     var valueRange: Float {
         return maximumValue - minimumValue
@@ -187,13 +187,10 @@ class IndicatorView: UIView {
         }
         
         var rotationAngle = gesture.rotation
-        print("Gesture rotation is made by \(radiansToDegress(radians: gesture.rotation))")
-        //        if rotationAngle < startAngle || rotationAngle > 0 { return }
+        
         if rotationAngle > knobMidAngle {
-            print("In here 1")
             rotationAngle -= CGFloat(2 * Double.pi)
         } else if rotationAngle < (knobMidAngle - CGFloat(2 * Double.pi)) {
-            print("In here 2")
             rotationAngle += CGFloat(2 * Double.pi)
         }
         rotationAngle = min(endAngle, max(startAngle, rotationAngle))

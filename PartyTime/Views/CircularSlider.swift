@@ -131,11 +131,6 @@ open class CircularSlider: UIView {
     // MARK: - init
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        print("Height: \(self.frame.height)")
-        print("Width: \(self.frame.width)")
-        print("Minx : \(self.frame.minX) \t MaxX: \(self.frame.maxX)")
-        print("MinY : \(self.frame.minY) \t MaxY: \(self.frame.maxY)")
-        print("Minx : \(self.frame.origin.x) \t MaxX: \(self.frame.origin.y)")
 //        configure()
     }
     

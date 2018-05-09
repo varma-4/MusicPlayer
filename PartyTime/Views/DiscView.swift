@@ -51,14 +51,11 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     var alreadyHiglighted = false
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Clicked item at IndexPath: \(indexPath.row)")
-        
         let cell = (collectionView.cellForItem(at: indexPath) as? CircularColectionViewCell)
         let layoutAttributes = cell?.cellLayoutAttributes as? CircularCollectionViewLayoutAttributes
 
         let angle = layoutAttributes?.angle.radiansToDegrees
         
-        print(angle!)
         let yShift = getYShiftContentoffset(for: indexPath)
         collectionView.setContentOffset(CGPoint(x: (cell?.bounds.minX)!, y: (cell?.bounds.minY)! + yShift), animated: true)
         
@@ -92,10 +89,10 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     func getAlbums() {
         let albumQuery = MPMediaQuery.albums()
         guard let albums = albumQuery.collections else {
-            print("No albums avalibale")
+//            print("No albums avalibale")
             return
         }
-        print("Albums Count: \(albums.count)\n\n\n")
+//        print("Albums Count: \(albums.count)\n\n\n")
         
         for eachAlbum in albums {
             if eachAlbum.items.count != 10 {
@@ -105,7 +102,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
                 musicAlbum.append(eachSong)
             }
             
-            print("Album fetched")
+//            print("Album fetched")
             break
         }
         
@@ -216,7 +213,6 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
     }()
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        print(touch)
         return true
     }
     
@@ -294,7 +290,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
         var radiusFinal = radius * 2
         if radius == 200 {
             radiusFinal = min(UIScreen.main.bounds.width - 10, UIScreen.main.bounds.height/2 - 20)
-            print("Radius Final: \(radiusFinal)")
+//            print("Radius Final: \(radiusFinal)")
         }
         let outerSemiCirclePath = UIBezierPath(arcCenter: center,
                                                radius: radiusFinal,
@@ -383,7 +379,7 @@ class DiscView: UIView, UIGestureRecognizerDelegate, UICollectionViewDataSource,
 
     func addLayer(shapeLayer: CAShapeLayer) {
         if let count = layer.sublayers?.count {
-            print("Number of layers found: \(count)")
+//            print("Number of layers found: \(count)")
             if count > 2 {
                 layer.sublayers = nil
             }

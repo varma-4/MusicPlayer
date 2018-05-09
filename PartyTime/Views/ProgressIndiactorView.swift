@@ -10,6 +10,7 @@ import UIKit
 
 class ProgressIndicatorView: IndicatorView {
     
+    // MARK:- Intialisers
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .clear
@@ -17,8 +18,27 @@ class ProgressIndicatorView: IndicatorView {
         endAngle = CGFloat(Double.pi / 2.2)
         centerOfArc = CGPoint(x: frame.width/2, y: 0)
         configureShapeLayers()
+        addProgressLabel()
     }
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    var progressLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.text = "1:02"
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.textAlignment = .left
+        return label
+    }()
+    
+    func addProgressLabel() {
+        addSubview(progressLabel)
+        progressLabel.translatesAutoresizingMaskIntoConstraints = false
+        progressLabel.leftAnchor.constraint(equalTo: self.centerXAnchor, constant: 20).isActive = true
+        progressLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -12).isActive = true
+        progressLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        progressLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }
 }
