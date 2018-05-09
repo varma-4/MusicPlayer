@@ -32,7 +32,7 @@ class IndicatorView: UIView {
     var endAngle: CGFloat = -CGFloat(Double.pi / 20)//0
     
     var angleRange: CGFloat {
-        return CGFloat(Double.pi/2)
+        return endAngle - startAngle
     }
     
     var knobMidAngle: CGFloat {
@@ -81,9 +81,9 @@ class IndicatorView: UIView {
         
         backgroundCircleLayer.path = getCirclePath()
         progressCircleLayer.path = getCirclePath()
-        //        knobLayer.path = getKnobPath()
+//        knobLayer.path = getKnobPath()
         
-        //        setValue(value, animated: false)
+//        setValue(value, animated: false)
     }
     
     // MARK:- Init Methods
@@ -113,10 +113,12 @@ class IndicatorView: UIView {
         self.layer.addSublayer(progressCircleLayer)
         
         knobLayer.frame = bounds
-        knobLayer.position = centerOfArc
+//        knobLayer.anchorPoint = centerOfArc
+        knobLayer.path = getKnobPath()
         knobLayer.lineWidth = 2
         knobLayer.fillColor = UIColor.green.cgColor
         knobLayer.strokeColor = UIColor.clear.cgColor
+        layer.addSublayer(knobLayer)
     }
     
     func configureGesture() {
@@ -138,13 +140,34 @@ class IndicatorView: UIView {
         knobLayer.removeAllAnimations()
     }
     
+    @objc func handleRotationGesture(_ sender: AnyObject) {
+        guard let gesture = sender as? RotationGestureRecognizer else { return }
+        if gesture.state == UIGestureRecognizerState.began {
+            cancelAnimation()
+        }
+        
+        var rotationAngle = gesture.rotation
+        
+        if rotationAngle > knobMidAngle {
+            rotationAngle -= CGFloat(2 * Double.pi)
+        } else if rotationAngle < (knobMidAngle - CGFloat(2 * Double.pi)) {
+            rotationAngle += CGFloat(2 * Double.pi)
+        }
+        rotationAngle = min(endAngle, max(startAngle, rotationAngle))
+        
+        guard abs(Double(rotationAngle - knobAngle)) < Double.pi/2 else { return }
+        
+        let valueForAngle = Float(rotationAngle - startAngle) / Float(angleRange) * valueRange + minimumValue
+        setValue(valueForAngle, animated: false)
+    }
+    
     open func setValue(_ value: Float, animated: Bool) {
         //        self.value = delegate?.circularSlider?(self, valueForValue: value) ?? value
         self.value = value
         
         //        updateLabels()
         setStrokeEnd(animated: animated)
-        //        setKnobRotation(animated: animated)
+        setKnobRotation(animated: animated)
     }
     
     func setStrokeEnd(animated: Bool) {
@@ -178,27 +201,6 @@ class IndicatorView: UIView {
         CATransaction.commit()
         
         backingKnobAngle = knobAngle
-    }
-    
-    @objc func handleRotationGesture(_ sender: AnyObject) {
-        guard let gesture = sender as? RotationGestureRecognizer else { return }
-        if gesture.state == UIGestureRecognizerState.began {
-            cancelAnimation()
-        }
-        
-        var rotationAngle = gesture.rotation
-        
-        if rotationAngle > knobMidAngle {
-            rotationAngle -= CGFloat(2 * Double.pi)
-        } else if rotationAngle < (knobMidAngle - CGFloat(2 * Double.pi)) {
-            rotationAngle += CGFloat(2 * Double.pi)
-        }
-        rotationAngle = min(endAngle, max(startAngle, rotationAngle))
-        
-        guard abs(Double(rotationAngle - knobAngle)) < Double.pi/2 else { return }
-        
-        let valueForAngle = Float(rotationAngle - startAngle) / Float(angleRange) * valueRange + minimumValue
-        setValue(valueForAngle, animated: false)
     }
     
     // TODO:- Remove Later
