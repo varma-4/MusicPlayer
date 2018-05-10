@@ -13,7 +13,7 @@ class VolumeIndicatorView: IndicatorView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .clear
-        configureShapeLayers()
+        configureVolumeShapeLayers()
         configureGesture()
         addVolumeIcons()
     }

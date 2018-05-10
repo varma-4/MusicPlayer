@@ -12,6 +12,7 @@ open class RotationGestureRecognizer: UIPanGestureRecognizer {
     
     // MARK: - properties
     var arcRadius: CGFloat = 100
+    var centerOfArc: CGPoint?
     fileprivate var valid = false
     fileprivate var knobRadius: CGFloat = 10
     
@@ -64,14 +65,15 @@ open class RotationGestureRecognizer: UIPanGestureRecognizer {
     }
     
     fileprivate func isInsideRing(_ touches: Set<NSObject>) -> Bool{
-        return true
+//        return true
         guard let touch = touches[touches.startIndex] as? UITouch else { return false }
         let location = touch.location(in: view)
         
         let outerRadius = arcRadius + knobRadius * (1 + tollerance)
         let innerRadius = arcRadius - knobRadius * (1 + tollerance)
         
-        let dist = sqrt(pow(location.x - view!.bounds.midX, 2) + pow(location.y - view!.bounds.midY, 2))
+        
+        let dist = sqrt(pow(location.x - (centerOfArc?.x)!, 2) + pow(location.y - (centerOfArc?.y)!, 2))
         
         return dist <= outerRadius && dist >= innerRadius
     }

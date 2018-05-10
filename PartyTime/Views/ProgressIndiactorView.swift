@@ -17,7 +17,13 @@ class ProgressIndicatorView: IndicatorView {
         startAngle = CGFloat(Double.pi / 20)
         endAngle = CGFloat(Double.pi / 2.2)
         centerOfArc = CGPoint(x: frame.width/2, y: 0)
-        configureShapeLayers()
+        knobAngleAddition = CGFloat(2 * Double.pi)
+        backingKnobAngle = CGFloat(Double.pi / 20)
+        // TODO:- Add seconds 0 to endTime
+        minimumValue = 0
+        maximumValue = 60
+        configureProgressShapeLayers()
+        configureGesture()
         addProgressLabel()
     }
     required init?(coder aDecoder: NSCoder) {

@@ -12,14 +12,13 @@ class IndicatorView: UIView {
     
     var progressCircleLayer = CAShapeLayer()
     var backgroundCircleLayer = CAShapeLayer()
-    // TODO:- Fix Knob layer rotation issue
     var knobLayer = CAShapeLayer()
     
     var rotationGesture: RotationGestureRecognizer?
     
     // MARK:- Constants
-    open var minimumValue: Float = 0
-    open var maximumValue: Float = 200
+    var minimumValue: Float = 0
+    var maximumValue: Float = 200
     
     var valueRange: Float {
         return maximumValue - minimumValue
@@ -27,7 +26,7 @@ class IndicatorView: UIView {
     
     lazy var centerOfArc: CGPoint = CGPoint(x: self.frame.width / 2, y: self.frame.height )
     
-    var startAngle: CGFloat = -CGFloat(Double.pi / 2.2)//-CGFloat(Double.pi / 2)
+    var startAngle: CGFloat = -CGFloat(Double.pi / 2.2)//.2)//-CGFloat(Double.pi / 2)
     
     var endAngle: CGFloat = -CGFloat(Double.pi / 20)//0
     
@@ -41,24 +40,27 @@ class IndicatorView: UIView {
     
     var arcRadius: CGFloat {
         get {
-            return ((frame.width / 2))
+            return frame.width / 2
         }
     }
     
     var knobRadius: CGFloat {
         get {
-            return 15
+            return 12
         }
     }
     
-    var backingKnobAngle: CGFloat = 0
+    var backingKnobAngle: CGFloat = -CGFloat(Double.pi / 2.2)
+    var knobAngleAddition: CGFloat = CGFloat(Double.pi/2)
     
     var knobAngle: CGFloat {
         return CGFloat(normalizedValue) * angleRange + startAngle
     }
     
+    var knobAngleRequired: CGFloat = 0
+    
     var knobRotationTransform: CATransform3D {
-        return CATransform3DMakeRotation(knobAngle, 0.0, 0.0, 1)
+        return CATransform3DMakeRotation(knobAngleRequired, 0.0, 0.0, 1)
     }
     
     var normalizedValue: Float {
@@ -76,16 +78,6 @@ class IndicatorView: UIView {
         }
     }
     
-    override func draw(_ rect: CGRect) {
-        rotationGesture?.arcRadius = arcRadius
-        
-        backgroundCircleLayer.path = getCirclePath()
-        progressCircleLayer.path = getCirclePath()
-//        knobLayer.path = getKnobPath()
-        
-//        setValue(value, animated: false)
-    }
-    
     // MARK:- Init Methods
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -96,34 +88,76 @@ class IndicatorView: UIView {
     }
     
     // MARK:- Configure ShapeLayers
-    func configureShapeLayers() {
-        backgroundCircleLayer.frame = bounds
-        backgroundCircleLayer.lineWidth = 5.0
-        backgroundCircleLayer.fillColor = UIColor.clear.cgColor
-        backgroundCircleLayer.strokeColor = UIColor.white.cgColor
-        backgroundCircleLayer.lineCap = kCALineCapRound
-        self.layer.addSublayer(backgroundCircleLayer)
+    func configureVolumeShapeLayers() {
+        knobLayer.anchorPoint = CGPoint(x: 0.5, y: 1)
+        let xPosition = centerOfArc.x - knobRadius / 2
+        let yPosition = centerOfArc.y - arcRadius - knobRadius / 2
+        knobLayer.path = getKnobPath(for: xPosition, y: yPosition)
+        configureShapeLayers()
+    }
+    
+    func configureProgressShapeLayers() {
+        knobLayer.anchorPoint = CGPoint(x: 0.5, y: 0)
+        let xPosition = centerOfArc.x + arcRadius - knobRadius / 2
+        let yPosition = centerOfArc.y - knobRadius / 2
+        knobLayer.path = getKnobPath(for: xPosition, y: yPosition)
+        // TODO:- Remove the below value
+        value = 50
+        configureShapeLayers()
+    }
+    
+    private func configureShapeLayers() {
+        addShapeLayer(for: backgroundCircleLayer, frame: bounds, lineWidth: 5.0, fillWith: .clear, strokeWith: .white)
+//        backgroundCircleLayer.frame = bounds
+//        backgroundCircleLayer.lineWidth = 5.0
+//        backgroundCircleLayer.fillColor = UIColor.clear.cgColor
+//        backgroundCircleLayer.strokeColor = UIColor.white.cgColor
+//        backgroundCircleLayer.lineCap = kCALineCapRound
+//        self.layer.addSublayer(backgroundCircleLayer)
         
-        progressCircleLayer.frame = bounds
-        progressCircleLayer.lineWidth = 5.0
-        progressCircleLayer.fillColor = UIColor.clear.cgColor
-        progressCircleLayer.strokeColor = UIColor.green.cgColor
+        addShapeLayer(for: progressCircleLayer, frame: bounds, lineWidth: 5.0, fillWith: .clear, strokeWith: .green)
+//        progressCircleLayer.frame = bounds
+//        progressCircleLayer.lineWidth = 5.0
+//        progressCircleLayer.fillColor = UIColor.clear.cgColor
+//        progressCircleLayer.strokeColor = UIColor.green.cgColor
         progressCircleLayer.strokeEnd = 0
-        progressCircleLayer.lineCap = kCALineCapRound
-        self.layer.addSublayer(progressCircleLayer)
+//        progressCircleLayer.lineCap = kCALineCapRound
+//        self.layer.addSublayer(progressCircleLayer)
         
-        knobLayer.frame = bounds
-//        knobLayer.anchorPoint = centerOfArc
-        knobLayer.path = getKnobPath()
-        knobLayer.lineWidth = 2
-        knobLayer.fillColor = UIColor.green.cgColor
-        knobLayer.strokeColor = UIColor.clear.cgColor
-        layer.addSublayer(knobLayer)
+        addShapeLayer(for: knobLayer, frame: bounds, lineWidth: 1.5, fillWith: .green, strokeWith: .clear)
+//        knobLayer.frame = bounds
+//        knobLayer.lineWidth = 1.5
+//        knobLayer.fillColor = UIColor.green.cgColor
+//        knobLayer.strokeColor = UIColor.clear.cgColor
+//        layer.addSublayer(knobLayer)
+        
+        backgroundCircleLayer.path = getCirclePath()
+        progressCircleLayer.path = getCirclePath()
+        
+        knobLayer.position = centerOfArc
+        
+//        backgroundCircleLayer.bounds = bounds
+//        progressCircleLayer.bounds = bounds
+//        knobLayer.bounds = bounds
+        
+        setValue(value, animated: false)
+    }
+    
+    func addShapeLayer(for layer: CAShapeLayer,  frame: CGRect, lineWidth: CGFloat, fillWith: UIColor, strokeWith: UIColor) {
+        layer.frame = frame
+        // TODO:- Remove and try layer.bounds
+        layer.bounds = frame
+        layer.lineWidth = lineWidth
+        layer.fillColor = fillWith.cgColor
+        layer.strokeColor = strokeWith.cgColor
+        layer.lineCap = kCALineCapRound
+        self.layer.addSublayer(layer)
     }
     
     func configureGesture() {
         rotationGesture = RotationGestureRecognizer(target: self, action: #selector(handleRotationGesture(_:)), arcRadius: arcRadius, knobRadius:  knobRadius)
         rotationGesture?.arcRadius = arcRadius
+        rotationGesture?.centerOfArc = centerOfArc
         addGestureRecognizer(rotationGesture!)
     }
     
@@ -131,14 +165,17 @@ class IndicatorView: UIView {
         return UIBezierPath(arcCenter: centerOfArc, radius: arcRadius, startAngle: startAngle, endAngle: endAngle, clockwise: true).cgPath
     }
     
-    func getKnobPath() -> CGPath {
-        return UIBezierPath(roundedRect: CGRect(x: centerOfArc.x - knobRadius / 2, y: centerOfArc.y - arcRadius - knobRadius / 2, width: knobRadius, height: knobRadius), cornerRadius: knobRadius / 2).cgPath
+    func getKnobPath(for x: CGFloat, y: CGFloat) -> CGPath {
+        return UIBezierPath(roundedRect: CGRect(x: x, y: y, width: knobRadius, height: knobRadius), cornerRadius: knobRadius / 2).cgPath
     }
     
-    func cancelAnimation() {
-        progressCircleLayer.removeAllAnimations()
-        knobLayer.removeAllAnimations()
-    }
+//    func getVolumeKnobPath() -> CGPath {
+//        return UIBezierPath(roundedRect: CGRect(x: (centerOfArc.x - knobRadius / 2), y: (centerOfArc.y - arcRadius - knobRadius / 2), width: knobRadius, height: knobRadius), cornerRadius: knobRadius / 2).cgPath
+//    }
+//
+//    func getProgressKnobPath() -> CGPath {
+//        return UIBezierPath(roundedRect: CGRect(x: (centerOfArc.x + arcRadius - knobRadius / 2), y: (centerOfArc.y - knobRadius / 2), width: knobRadius, height: knobRadius), cornerRadius: knobRadius / 2).cgPath
+//    }
     
     @objc func handleRotationGesture(_ sender: AnyObject) {
         guard let gesture = sender as? RotationGestureRecognizer else { return }
@@ -160,14 +197,21 @@ class IndicatorView: UIView {
         let valueForAngle = Float(rotationAngle - startAngle) / Float(angleRange) * valueRange + minimumValue
         setValue(valueForAngle, animated: false)
     }
+}
+
+// MARK:- GestureBased Actions
+extension IndicatorView {
+    
+    func cancelAnimation() {
+        progressCircleLayer.removeAllAnimations()
+        knobLayer.removeAllAnimations()
+    }
     
     open func setValue(_ value: Float, animated: Bool) {
         //        self.value = delegate?.circularSlider?(self, valueForValue: value) ?? value
         self.value = value
-        
-        //        updateLabels()
-        setStrokeEnd(animated: animated)
-        setKnobRotation(animated: animated)
+        self.setStrokeEnd(animated: animated)
+        self.setKnobRotation(animated: animated)
     }
     
     func setStrokeEnd(animated: Bool) {
@@ -194,19 +238,16 @@ class IndicatorView: UIView {
         
         let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
         animation.duration = animated ? 0.66 : 0
-        animation.values = [backingKnobAngle, knobAngle]
+        knobAngleRequired = knobAngle + knobAngleAddition
+        animation.values = [backingKnobAngle, knobAngleRequired]
         knobLayer.add(animation, forKey: "knobRotationAnimation")
         knobLayer.transform = knobRotationTransform
         
         CATransaction.commit()
         
-        backingKnobAngle = knobAngle
+        backingKnobAngle = knobAngleRequired
     }
     
-    // TODO:- Remove Later
-    func radiansToDegress(radians: CGFloat) -> CGFloat {
-        return radians * 180 / CGFloat(Double.pi)
-    }
 }
 
 
