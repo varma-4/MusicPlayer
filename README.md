@@ -6,5 +6,4 @@ This app implements a unique design for interacting with your Music Albums, the 
 
 # GIF
 
-![App Gif](app.gif)
-
+<img src="app.gif?raw=true" width="200px">
