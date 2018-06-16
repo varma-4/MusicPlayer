@@ -82,14 +82,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3C6F8AD020A2BB8800061078 /* Utilities */ = {
+		3C6F8AD020A2BB8800061078 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				3CA3173520A3015600254700 /* Extensions.swift */,
 				3CA3173720A3015600254700 /* Utility.swift */,
 				3CA3173620A3015600254700 /* Utils.swift */,
 			);
-			path = Utilities;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		3C6F8AD120A2BBE500061078 /* Views */ = {
@@ -130,6 +130,27 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		AD31A9A120D5577B005C4D59 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				ADDCC7F3202CCB5000C3BFAC /* Main.storyboard */,
+				ADDCC7F9202CCB5000C3BFAC /* Assets.xcassets */,
+				ADDCC7FB202CCB5000C3BFAC /* LaunchScreen.storyboard */,
+				ADDCC7FE202CCB5000C3BFAC /* Info.plist */,
+				ADDCC7F6202CCB5000C3BFAC /* PartyTime.xcdatamodeld */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		AD31A9A220D55787005C4D59 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3C6F8AD220A2BC5B00061078 /* Gestures */,
+				3C6F8AD320A2BC7500061078 /* Layouts */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		ADDCC7E3202CCB4F00C3BFAC = {
 			isa = PBXGroup;
 			children = (
@@ -153,15 +174,10 @@
 			children = (
 				ADDCC7EF202CCB5000C3BFAC /* AppDelegate.swift */,
 				3C6F8AD120A2BBE500061078 /* Views */,
-				3C6F8AD220A2BC5B00061078 /* Gestures */,
-				3C6F8AD020A2BB8800061078 /* Utilities */,
+				3C6F8AD020A2BB8800061078 /* Resources */,
 				3C6F8AD420A2BC8000061078 /* Controllers */,
-				3C6F8AD320A2BC7500061078 /* Layouts */,
-				ADDCC7F3202CCB5000C3BFAC /* Main.storyboard */,
-				ADDCC7F9202CCB5000C3BFAC /* Assets.xcassets */,
-				ADDCC7FB202CCB5000C3BFAC /* LaunchScreen.storyboard */,
-				ADDCC7FE202CCB5000C3BFAC /* Info.plist */,
-				ADDCC7F6202CCB5000C3BFAC /* PartyTime.xcdatamodeld */,
+				AD31A9A220D55787005C4D59 /* Models */,
+				AD31A9A120D5577B005C4D59 /* Assets */,
 			);
 			path = PartyTime;
 			sourceTree = "<group>";
@@ -447,7 +463,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3AXA88DHR;
-				INFOPLIST_FILE = PartyTime/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PartyTime/Assets/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Varma.PartyTime;
@@ -463,7 +479,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D3AXA88DHR;
-				INFOPLIST_FILE = PartyTime/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PartyTime/Assets/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Varma.PartyTime;
