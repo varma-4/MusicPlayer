@@ -14,7 +14,6 @@ class CircularCollectionViewLayoutAttributes: UICollectionViewLayoutAttributes {
     var angle: CGFloat = 0 {
         // 2
         didSet {
-//            zIndex = Int(angle * 1000000)
             transform = CGAffineTransform(rotationAngle: angle)
         }
     }
@@ -63,7 +62,6 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
         // (collectionView?.contentOffset.x)! +
 
         let centerX = collectionView!.contentOffset.x + (collectionView!.bounds.width / 2.0)
-        let anchorPointY = ((itemSize.width / 2.0) + radius) / itemSize.width
         
         attributesList = (0..<collectionView!.numberOfItems(inSection: 0)).map { (i)
             -> CircularCollectionViewLayoutAttributes in
@@ -94,7 +92,6 @@ class CircularCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-//         print("Height: \((collectionView?.bounds.height)! * 1.65)")
         return CGSize(width: (collectionView?.bounds.width)!, height: (collectionView?.bounds.height)! * 1.65)
     }
 

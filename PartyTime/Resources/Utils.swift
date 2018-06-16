@@ -22,6 +22,7 @@ extension Float {
         
         return  fmt.string(from: NSNumber(value: self)) ?? ""
     }
+    
 }
 
 
@@ -76,4 +77,5 @@ extension String {
         
         return attributeString
     }
+    
 }
